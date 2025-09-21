@@ -10,7 +10,7 @@ const protectedRoutes = {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token = request.cookies.get("auth-token")?.value;
+  const token = request.cookies.get("authToken")?.value;
   const isPublicRoute = publicRoutes.includes(pathname);
   const isPrivateRoute = Object.keys(protectedRoutes).some((route) =>
     pathname.startsWith(route)

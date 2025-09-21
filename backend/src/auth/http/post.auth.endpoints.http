@@ -8,3 +8,12 @@ Content-Type: application/json
     "email": "faladeyusuf54@email.com",
     "password": "Adetomi.54"
 }
+
+// LOGIN USER
+POST http://localhost:5000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "faladeyusuf54@email.com",
+    "password": "Adetomi.54"
+}
