@@ -24,7 +24,7 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   @MinLength(1)
-  @MaxLength(10)
+  @MaxLength(20)
   username?: string;
 
   @IsNotEmpty()
