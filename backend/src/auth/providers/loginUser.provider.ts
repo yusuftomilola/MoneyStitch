@@ -34,6 +34,6 @@ export class LoginUserProvider {
       expires,
     });
 
-    return user;
+    return { user, token };
   }
 }

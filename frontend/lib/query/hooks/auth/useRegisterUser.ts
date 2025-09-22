@@ -6,7 +6,7 @@ import { apiClient } from "@/lib/apiClient";
 import { useRouter } from "next/navigation";
 
 const registerUserFn = async (data: any) => {
-  return apiClient(data);
+  return await apiClient.post("/auth/register", data);
 };
 
 export function useRegisterUser() {

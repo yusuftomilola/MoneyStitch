@@ -7,7 +7,7 @@ export interface User {
   id: string;
   firstname: string;
   lastname: string;
-  username?: string;
+  username?: string | null;
   email: string;
   role: "user" | "admin";
   isActive: boolean;
@@ -15,7 +15,7 @@ export interface User {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date;
+  deletedAt: Date | null;
 }
 
 export interface RegisterUser {
@@ -28,4 +28,16 @@ export interface RegisterUser {
 export interface LoginUser {
   email: string;
   password: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
+
+export interface AuthResponse {
+  user: User;
+  token: string;
 }
