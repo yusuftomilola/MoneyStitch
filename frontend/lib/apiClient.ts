@@ -80,6 +80,7 @@ class ApiClient {
   async post<T>(endpoint: string, data?: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: "POST",
+      credentials: "include",
       body: data ? JSON.stringify(data) : undefined,
     });
   }

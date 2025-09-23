@@ -37,6 +37,8 @@ export class LoginUserProvider {
       secure: true,
       httpOnly: true,
       expires,
+      path: '/api/v1/auth/refresh-token',
+      sameSite: 'none',
     });
 
     return { user, accessToken };

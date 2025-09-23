@@ -14,6 +14,7 @@ import { HashingProvider } from './hashing.provider';
 import { GenerateTokensProvider } from './generateTokens.provider';
 import { RefreshTokenRepositoryOperations } from './RefreshTokenCrud.repository';
 import { ConfigService } from '@nestjs/config';
+import { AuthResponse } from '../interfaces/authResponse.interface';
 
 @Injectable()
 export class RefreshTokensProvider {
@@ -36,8 +37,7 @@ export class RefreshTokensProvider {
   public async refreshTokens(
     userId: string,
     refreshToken: string,
-    req: Request,
-  ) {
+  ): Promise<AuthResponse> {
     const user = await this.usersService.findUserById(userId);
 
     // find all the tokens of the user in the database
@@ -63,11 +63,6 @@ export class RefreshTokensProvider {
         break;
       }
     }
-
-    console.log(
-      'THIS IS THE REFRESH TOKEN ENTITY FOUND IN THE DATABASE',
-      matchingExistingToken,
-    );
 
     if (!matchingExistingToken) {
       throw new ForbiddenException('Access Denied');
@@ -119,7 +114,6 @@ export class RefreshTokensProvider {
       return {
         user,
         accessToken: newAccessToken,
-        refreshToken,
       };
     }
 

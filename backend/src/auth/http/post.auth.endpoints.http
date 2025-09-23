@@ -17,3 +17,8 @@ Content-Type: application/json
     "email": "faladekunle544@email.com",
     "password": "Adetomi.54"
 }
+
+// REFRESH TOKEN
+POST http://localhost:5000/api/v1/auth/refresh-token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZjM2MDQ2Yi1kM2I0LTQzMDYtOTNmMC0wNzFmMzY3NmYzY2QiLCJyb2xlIjoidXNlciIsImVtYWlsIjoiYXNhYmlrdW5sZUBlbWFpbC5jb20iLCJpYXQiOjE3NTg1OTgzNjgsImV4cCI6MTc1ODY4NDc2OH0.uHglNn9frmQRtQEo6pGoY6ato4fK1GRABNJjpSaSbeU
+Cookie: authRefreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZjM2MDQ2Yi1kM2I0LTQzMDYtOTNmMC0wNzFmMzY3NmYzY2QiLCJyb2xlIjoidXNlciIsImlhdCI6MTc1ODU5ODM2OCwiZXhwIjoxNzU5MjAzMTY4fQ.kdb03BN9VZZPjrqRdaP69-KdwxD_DkwgfiHdF6Y-UeQ
