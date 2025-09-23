@@ -6,6 +6,8 @@ import { FindOneUserByIdProvider } from './findOneUserById.provider';
 import { FindOneUserByEmailProvider } from './findOneUserByEmail.provider';
 import { ValidateUserProvider } from './validateUser.provider';
 import { GetUsersProvider } from './getusers.provider';
+import { Response } from 'express';
+import { AuthResponse } from 'src/auth/interfaces/authResponse.interface';
 
 @Injectable()
 export class UsersService {
@@ -28,8 +30,11 @@ export class UsersService {
   }
 
   // CREATE USER
-  public async createUser(createUserDto: CreateUserDto): Promise<User> {
-    return await this.createUserProvider.createUser(createUserDto);
+  public async createUser(
+    createUserDto: CreateUserDto,
+    response: Response,
+  ): Promise<AuthResponse> {
+    return await this.createUserProvider.createUser(createUserDto, response);
   }
 
   // VALIDATE USER

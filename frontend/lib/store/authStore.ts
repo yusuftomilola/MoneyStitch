@@ -15,7 +15,7 @@ interface AuthActions {
   login: (data: LoginUser) => Promise<void>;
   register: (data: RegisterUser) => Promise<void>;
   logout: () => void;
-  refreshToken: () => Promise<void>;
+  refreshAccessToken: () => Promise<void>;
 
   //User actions
   updateProfile: (userData: Partial<User>) => Promise<void>;
@@ -36,7 +36,7 @@ export const useAuthStore = create<AuthStore>()(
       (set, get) => ({
         // INITIAL STATE
         user: null,
-        token: null,
+        accessToken: null,
         isAuthenticated: false,
         isLoading: false,
 
@@ -50,21 +50,21 @@ export const useAuthStore = create<AuthStore>()(
               data
             );
 
-            const { user, token } = response;
+            const { user, accessToken } = response;
 
             // set the token in the api request headers authorization so that it always sends it to the backend when sending a request.
-            apiClient.setToken(token);
+            apiClient.setToken(accessToken);
 
             // update the local ui store state
             set({
               user,
-              token,
+              accessToken,
               isAuthenticated: true,
               isLoading: false,
             });
 
             // persist token to local storage and cookie for middleware usage
-            storage.setToken(token);
+            storage.setToken(accessToken);
 
             // persist user to local storage
             storage.setUser(user);
@@ -77,21 +77,21 @@ export const useAuthStore = create<AuthStore>()(
           try {
             set({ isLoading: true });
 
-            const { user, token } = await apiClient.post<AuthResponse>(
+            const { user, accessToken } = await apiClient.post<AuthResponse>(
               "/auth/register",
               data
             );
 
-            apiClient.setToken(token);
+            apiClient.setToken(accessToken);
 
             set({
               user,
-              token,
+              accessToken,
               isAuthenticated: true,
               isLoading: false,
             });
 
-            storage.setToken(token);
+            storage.setToken(accessToken);
             storage.setUser(user);
           } catch (error) {
             set({ isLoading: false });
@@ -101,16 +101,16 @@ export const useAuthStore = create<AuthStore>()(
         logout: () => {
           set({
             user: null,
-            token: null,
+            accessToken: null,
             isAuthenticated: false,
             isLoading: false,
           });
           apiClient.setToken(null);
           storage.clear();
         },
-        refreshToken: async () => {
+        refreshAccessToken: async () => {
           try {
-            const currentToken = get().token;
+            const currentToken = get().accessToken;
 
             if (!currentToken) {
               throw new Error("No token available");
@@ -120,17 +120,17 @@ export const useAuthStore = create<AuthStore>()(
               "/auth/refresh-token"
             );
 
-            const { token, user } = response;
+            const { accessToken, user } = response;
 
-            apiClient.setToken(token);
+            apiClient.setToken(accessToken);
 
             set({
               user,
-              token,
+              accessToken,
               isAuthenticated: true,
             });
 
-            storage.setToken(token);
+            storage.setToken(accessToken);
             storage.setUser(user);
           } catch (error) {
             get().logout;
@@ -164,24 +164,24 @@ export const useAuthStore = create<AuthStore>()(
         setUser: (user: User | null) => {
           set({ user, isAuthenticated: !!user });
         },
-        setToken: (token: string | null) => {
-          set({ token });
-          apiClient.setToken(token);
+        setToken: (accessToken: string | null) => {
+          set({ accessToken });
+          apiClient.setToken(accessToken);
         },
         setLoading: (loading: boolean) => {
           set({ isLoading: loading });
         },
         initializeAuth: () => {
           // Get the persisted data from localstorage
-          const token = storage.getToken();
+          const accessToken = storage.getToken();
           const user = storage.getUser();
 
-          if (token && user) {
-            apiClient.setToken(token);
+          if (accessToken && user) {
+            apiClient.setToken(accessToken);
 
             set({
               user,
-              token,
+              accessToken,
               isAuthenticated: true,
             });
           }
@@ -189,7 +189,7 @@ export const useAuthStore = create<AuthStore>()(
         clearAuth: () => {
           set({
             user: null,
-            token: null,
+            accessToken: null,
             isAuthenticated: false,
             isLoading: false,
           });
@@ -201,7 +201,7 @@ export const useAuthStore = create<AuthStore>()(
         name: "AuthStore",
         partialize: (state) => ({
           user: state.user,
-          token: state.token,
+          accessToken: state.accessToken,
           isAuthenticated: state.isAuthenticated,
         }),
       }
@@ -214,7 +214,7 @@ export const useAuthStore = create<AuthStore>()(
 export const useAuthState = () =>
   useAuthStore((state) => ({
     user: state.user,
-    token: state.token,
+    accessToken: state.accessToken,
     isAuthenticated: state.isAuthenticated,
     isLoading: state.isLoading,
   }));
@@ -224,7 +224,7 @@ export const useAuthActions = () =>
     login: state.login,
     register: state.register,
     logout: state.logout,
-    refreshToken: state.refreshToken,
+    refreshAccessToken: state.refreshAccessToken,
     updateProfile: state.updateProfile,
     initializeAuth: state.initializeAuth,
     clearAuth: state.clearAuth,

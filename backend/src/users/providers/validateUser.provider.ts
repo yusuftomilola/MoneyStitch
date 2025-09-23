@@ -28,7 +28,13 @@ export class ValidateUserProvider {
         throw new UnauthorizedException('Invalid email/password');
       }
 
-      const { password, ...result } = user;
+      const {
+        password,
+        passwordResetExpiresIn,
+        passwordResetToken,
+        refreshTokens,
+        ...result
+      } = user;
 
       return result;
     } catch (error) {

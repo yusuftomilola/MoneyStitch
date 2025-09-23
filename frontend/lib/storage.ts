@@ -18,7 +18,7 @@ export const storage = {
     if (typeof window === "undefined") return;
     localStorage.setItem(AUTH_TOKEN_KEY, token);
     // set the token to cookie as well for middleware access
-    document.cookie = `authToken=${token}; path=/; max-age=${7 * 24 * 60 * 60}`; // 7 days
+    document.cookie = `authToken=${token}; path=/; max-age=${1 * 24 * 60 * 60}`; // 1 day - Access Token
   },
 
   removeToken(): void {

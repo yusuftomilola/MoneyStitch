@@ -15,7 +15,8 @@ export function useRegisterUser() {
   return useMutation({
     mutationKey: mutationKeys.registerUser,
     mutationFn: registerUserFn,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(data);
       toast.success("User created successfully");
       router.push("/");
     },

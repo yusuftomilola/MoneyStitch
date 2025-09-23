@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRole } from '../enums/userRoles.enum';
 import { Exclude } from 'class-transformer';
+import { RefreshToken } from 'src/auth/entities/refreshToken.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -65,6 +67,10 @@ export class User {
     default: true,
   })
   isActive: boolean;
+
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  @Exclude()
+  refreshTokens: RefreshToken[];
 
   @Column({
     type: 'boolean',

@@ -9,6 +9,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { LoginUserProvider } from './providers/loginUser.provider';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { RefreshToken } from './entities/refreshToken.entity';
+import { JwtRefreshStrategy } from './strategies/jwtRefresh.strategy';
+import { RefreshTokenRepositoryOperations } from './providers/RefreshTokenCrud.repository';
+import { RefreshTokensProvider } from './providers/refreshTokens.provider';
+import { FindOneRefreshTokenProvider } from './providers/findOneRefreshToken.provider';
+import { GenerateTokensProvider } from './providers/generateTokens.provider';
 
 @Module({
   imports: [
@@ -20,10 +27,11 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: configService.get('JWT_EXPIRATION'),
+          expiresIn: configService.get('JWT_ACCESS_EXPIRATION'),
         },
       }),
     }),
+    TypeOrmModule.forFeature([RefreshToken]),
   ],
   controllers: [AuthController],
   providers: [
@@ -35,7 +43,19 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     LocalStrategy,
     LoginUserProvider,
     JwtStrategy,
+    JwtRefreshStrategy,
+    RefreshTokenRepositoryOperations,
+    RefreshTokensProvider,
+    FindOneRefreshTokenProvider,
+    GenerateTokensProvider,
   ],
-  exports: [AuthService, HashingProvider],
+  exports: [
+    AuthService,
+    HashingProvider,
+    RefreshTokenRepositoryOperations,
+    RefreshTokensProvider,
+    FindOneRefreshTokenProvider,
+    GenerateTokensProvider,
+  ],
 })
 export class AuthModule {}

@@ -2,38 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { User } from '../../users/entities/user.entity';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { TokenPayload } from '../interfaces/tokenPayload.interface';
+import { GenerateTokensProvider } from './generateTokens.provider';
+import { RefreshTokenRepositoryOperations } from './RefreshTokenCrud.repository';
+import { AuthResponse } from '../interfaces/authResponse.interface';
 
 @Injectable()
 export class LoginUserProvider {
   constructor(
     private readonly configService: ConfigService,
 
-    private readonly jwtService: JwtService,
+    private readonly generateTokensProvider: GenerateTokensProvider,
+
+    private readonly refreshTokenRepositoryOperations: RefreshTokenRepositoryOperations,
   ) {}
 
-  public async loginUser(user: User, response: Response) {
-    const jwtExpirationMs = parseInt(
-      this.configService.get<string>('JWT_EXPIRATION') || '3600000',
-    ); // 1 HOUR in milliseconds
+  public async loginUser(
+    user: User,
+    response: Response,
+  ): Promise<AuthResponse> {
+    const { accessToken, refreshToken } =
+      await this.generateTokensProvider.generateBothTokens(user);
 
+    await this.refreshTokenRepositoryOperations.saveRefreshToken(
+      user,
+      refreshToken,
+    );
+
+    const jwtExpirationMs = parseInt(
+      this.configService.get<string>('JWT_REFRESH_EXPIRATION') || '604800000',
+    ); // 7 DAYS in milliseconds
     const expires = new Date(Date.now() + jwtExpirationMs);
 
-    const tokenPayload: TokenPayload = {
-      userId: user.id,
-    };
-
-    const token = this.jwtService.sign(tokenPayload);
-
-    console.log(token);
-
-    response.cookie('authToken', token, {
+    response.cookie('authRefreshToken', refreshToken, {
       secure: true,
       httpOnly: true,
       expires,
     });
 
-    return { user, token };
+    return { user, accessToken };
   }
 }

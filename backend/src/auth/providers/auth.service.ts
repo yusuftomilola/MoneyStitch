@@ -4,6 +4,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/providers/users.service';
 import { LoginUserProvider } from './loginUser.provider';
 import { Response } from 'express';
+import { AuthResponse } from '../interfaces/authResponse.interface';
 
 @Injectable()
 export class AuthService {
@@ -14,8 +15,11 @@ export class AuthService {
   ) {}
 
   // CREATE USER
-  public async createUser(createUserDto: CreateUserDto): Promise<User> {
-    return await this.usersService.createUser(createUserDto);
+  public async createUser(
+    createUserDto: CreateUserDto,
+    response: Response,
+  ): Promise<AuthResponse> {
+    return await this.usersService.createUser(createUserDto, response);
   }
 
   // VALIDATE USER
@@ -27,7 +31,10 @@ export class AuthService {
   }
 
   // LOGIN USER
-  public async loginUser(user: User, response: Response) {
+  public async loginUser(
+    user: User,
+    response: Response,
+  ): Promise<AuthResponse> {
     return await this.loginUserProvider.loginUser(user, response);
   }
 }

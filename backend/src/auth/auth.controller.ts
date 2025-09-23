@@ -15,6 +15,7 @@ import { GetCurrentUser } from './decorators/getCurrentUser.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
 import { Response } from 'express';
 import { IsPublic } from './decorators/public.decorator';
+import { AuthResponse } from './interfaces/authResponse.interface';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -24,8 +25,11 @@ export class AuthController {
   @IsPublic()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  public async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.authService.createUser(createUserDto);
+  public async createUser(
+    @Body() createUserDto: CreateUserDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<AuthResponse> {
+    return await this.authService.createUser(createUserDto, response);
   }
 
   // LOGIN USER
@@ -37,7 +41,7 @@ export class AuthController {
     @Body() loginUserDto: LoginUserDto,
     @GetCurrentUser() user: User,
     @Res({ passthrough: true }) response: Response,
-  ) {
+  ): Promise<AuthResponse> {
     return await this.authService.loginUser(user, response);
   }
 }
