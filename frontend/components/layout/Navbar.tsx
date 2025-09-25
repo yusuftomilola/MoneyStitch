@@ -1,9 +1,12 @@
 "use client";
 import { DollarSign, X, Menu } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
+import { useAuthState } from "@/lib/store/authStore";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuthState();
 
   return (
     <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
@@ -52,12 +55,28 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <button className="text-slate-600 hover:text-emerald-600 px-4 py-2 rounded-lg transition-colors">
-              Login
-            </button>
-            <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
-              Sign Up
-            </button>
+            {isAuthenticated ? (
+              <>
+                <Link href={"#"}>
+                  <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer">
+                    Logout
+                  </button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href={"/login"}>
+                  <button className="text-slate-600 hover:text-emerald-600 px-4 py-2 rounded-lg transition-colors cursor-pointer">
+                    Login
+                  </button>
+                </Link>
+                <Link href={"/register"}>
+                  <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer">
+                    Sign Up
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
 
           <button
@@ -107,12 +126,28 @@ export default function Navbar() {
               Contact
             </a>
             <div className="flex space-x-3 pt-3 border-t border-gray-100">
-              <button className="text-slate-600 hover:text-emerald-600 px-4 py-2 rounded-lg">
-                Login
-              </button>
-              <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700">
-                Sign Up
-              </button>
+              {isAuthenticated ? (
+                <>
+                  <Link href={"#"}>
+                    <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer">
+                      Logout
+                    </button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href={"/login"}>
+                    <button className="text-slate-600 hover:text-emerald-600 px-4 py-2 rounded-lg cursor-pointer">
+                      Login
+                    </button>
+                  </Link>
+                  <Link href={"/register"}>
+                    <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 cursor-pointer">
+                      Sign Up
+                    </button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

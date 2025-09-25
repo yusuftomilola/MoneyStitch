@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useShallow } from "zustand/shallow";
 import { persist, devtools } from "zustand/middleware";
 import {
   AuthResponse,
@@ -212,12 +213,14 @@ export const useAuthStore = create<AuthStore>()(
 
 // SELECTORS FOR OPTIMIZED RE-RENDERS
 export const useAuthState = () =>
-  useAuthStore((state) => ({
-    user: state.user,
-    accessToken: state.accessToken,
-    isAuthenticated: state.isAuthenticated,
-    isLoading: state.isLoading,
-  }));
+  useAuthStore(
+    useShallow((state) => ({
+      user: state.user,
+      accessToken: state.accessToken,
+      isAuthenticated: state.isAuthenticated,
+      isLoading: state.isLoading,
+    }))
+  );
 
 export const useAuthActions = () =>
   useAuthStore((state) => ({

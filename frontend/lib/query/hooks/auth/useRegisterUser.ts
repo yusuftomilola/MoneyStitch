@@ -2,15 +2,19 @@
 import { useMutation } from "@tanstack/react-query";
 import { mutationKeys } from "../../keys/mutationKeys";
 import { toast } from "sonner";
-import { apiClient } from "@/lib/apiClient";
 import { useRouter } from "next/navigation";
-
-const registerUserFn = async (data: any) => {
-  return await apiClient.post("/auth/register", data);
-};
+import { useAuthStore } from "@/lib/store/authStore";
+import { RegisterUser } from "@/lib/types/user";
 
 export function useRegisterUser() {
   const router = useRouter();
+  const register = useAuthStore((state) => state.register);
+
+  const registerUserFn = async (registerUser: RegisterUser) => {
+    const createdUser = await register(registerUser);
+
+    return createdUser;
+  };
 
   return useMutation({
     mutationKey: mutationKeys.registerUser,
@@ -20,8 +24,9 @@ export function useRegisterUser() {
       toast.success("User created successfully");
       router.push("/");
     },
-    onError: () => {
+    onError: (error) => {
       toast.error("Error creating user");
+      console.error("Register failed:", error);
     },
   });
 }

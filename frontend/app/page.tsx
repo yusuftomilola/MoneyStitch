@@ -1,13 +1,12 @@
 import {
-  Navbar,
   Hero,
   Features,
   FeaturedTool,
   Blog,
   Premium,
-  Footer,
   Newsletter,
 } from "@/components/homepage";
+import { Footer, Navbar } from "@/components/layout";
 
 const MoneyStitchLanding = () => {
   return (
