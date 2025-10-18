@@ -6,13 +6,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Request } from 'express';
 import { UsersService } from 'src/users/providers/users.service';
 import { RefreshToken } from '../entities/refreshToken.entity';
 import { Repository } from 'typeorm';
 import { HashingProvider } from './hashing.provider';
 import { GenerateTokensProvider } from './generateTokens.provider';
-import { RefreshTokenRepositoryOperations } from './RefreshTokenCrud.repository';
 import { ConfigService } from '@nestjs/config';
 import { AuthResponse } from '../interfaces/authResponse.interface';
 
@@ -28,8 +26,6 @@ export class RefreshTokensProvider {
     private readonly hashingProvider: HashingProvider,
 
     private readonly generateTokensProvider: GenerateTokensProvider,
-
-    private readonly refreshTokenRepositoryOperations: RefreshTokenRepositoryOperations,
 
     private readonly configService: ConfigService,
   ) {}

@@ -13,6 +13,7 @@ import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { HashingProvider } from './hashing.provider';
 import { FindOneRefreshTokenProvider } from './findOneRefreshToken.provider';
+import { LogoutResponse } from '../interfaces/logout.interface';
 
 @Injectable()
 export class RefreshTokenRepositoryOperations {
@@ -82,33 +83,61 @@ export class RefreshTokenRepositoryOperations {
 
   // [2] find one refresh token from the database and return it
   public async findOneRefreshToken(userId: string, userToken: string) {
-    const refreshToken =
+    const refreshTokenEntity =
       await this.findOneRefreshTokenProvider.findRefreshToken(
         userId,
         userToken,
       );
 
-    return refreshToken;
+    return refreshTokenEntity;
   }
 
   // [3] invalidate/revoke a refresh token entity
-  public async revokeSingleRefreshToken(userId: string, userToken: string) {
-    let refreshToken: RefreshToken;
-
-    refreshToken = await this.findOneRefreshTokenProvider.findRefreshToken(
-      userId,
-      userToken,
+  public async revokeSingleRefreshToken(
+    userId: string,
+    userToken: string,
+  ): Promise<LogoutResponse> {
+    console.log('=== REVOKE SINGLE TOKEN ===');
+    console.log('User ID:', userId);
+    console.log(
+      'Token to revoke (first 20 chars):',
+      userToken?.substring(0, 20),
     );
+
+    let refreshTokenEntity: RefreshToken;
+
+    try {
+      refreshTokenEntity =
+        await this.findOneRefreshTokenProvider.findRefreshToken(
+          userId,
+          userToken,
+        );
+
+      console.log('Found matching token:', refreshTokenEntity.id);
+      console.log('Token already revoked?', refreshTokenEntity.revoked);
+    } catch (error) {
+      console.error('Error finding refresh token:', error.message);
+      throw error;
+    }
 
     const now = new Date();
 
-    refreshToken.revoked = true;
-    refreshToken.revokedAt = now;
-    await this.refreshTokenEntity.save(refreshToken);
+    refreshTokenEntity.revoked = true;
+    refreshTokenEntity.revokedAt = now;
+
+    console.log('Attempting to save revoked token...');
+
+    try {
+      await this.refreshTokenEntity.save(refreshTokenEntity);
+      console.log('Token revoked successfully in database');
+    } catch (error) {
+      console.error('Error saving revoked token:', error);
+      throw error;
+    }
 
     return {
-      loggedOut: true,
-      refreshToken,
+      status: true,
+      message: 'Refresh token revoked successfully',
     };
   }
 

@@ -10,6 +10,7 @@ import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { GenerateTokensProvider } from 'src/auth/providers/generateTokens.provider';
 import { RefreshTokenRepositoryOperations } from 'src/auth/providers/RefreshTokenCrud.repository';
+import { CookieHelper } from 'src/common/helpers/cookie.helper';
 
 @Injectable()
 export class CreateUserProvider {
@@ -62,13 +63,13 @@ export class CreateUserProvider {
       ); // 7 DAYS in milliseconds
       const expires = new Date(Date.now() + jwtExpirationMs);
 
-      response.cookie('authRefreshToken', refreshToken, {
-        secure: true,
-        httpOnly: true,
+      // use environment-aware cookie settings
+      const cookieOptions = CookieHelper.getRefreshTokenCookieOptions(
+        this.configService,
         expires,
-        path: '/api/v1/auth/refresh-token',
-        sameSite: 'none',
-      });
+      );
+
+      response.cookie('authRefreshToken', refreshToken, cookieOptions);
 
       return { user, accessToken };
     } catch (error) {

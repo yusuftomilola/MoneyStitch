@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { GenerateTokensProvider } from './generateTokens.provider';
 import { RefreshTokenRepositoryOperations } from './RefreshTokenCrud.repository';
 import { AuthResponse } from '../interfaces/authResponse.interface';
+import { CookieHelper } from 'src/common/helpers/cookie.helper';
 
 @Injectable()
 export class LoginUserProvider {
@@ -33,13 +34,13 @@ export class LoginUserProvider {
     ); // 7 DAYS in milliseconds
     const expires = new Date(Date.now() + jwtExpirationMs);
 
-    response.cookie('authRefreshToken', refreshToken, {
-      secure: true,
-      httpOnly: true,
+    // use environment-aware cookie settings
+    const cookieOptions = CookieHelper.getRefreshTokenCookieOptions(
+      this.configService,
       expires,
-      path: '/api/v1/auth/refresh-token',
-      sameSite: 'none',
-    });
+    );
+
+    response.cookie('authRefreshToken', refreshToken, cookieOptions);
 
     return { user, accessToken };
   }

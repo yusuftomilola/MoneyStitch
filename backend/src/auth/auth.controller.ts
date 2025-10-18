@@ -18,10 +18,16 @@ import { Request, Response } from 'express';
 import { IsPublic } from './decorators/public.decorator';
 import { AuthResponse } from './interfaces/authResponse.interface';
 import { RefreshTokenGuard } from './guards/refreshToken.guard';
+import { LogoutResponse } from './interfaces/logout.interface';
+import { CookieHelper } from 'src/common/helpers/cookie.helper';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('api/v1/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   // CREATE USER
   @IsPublic()
@@ -44,7 +50,14 @@ export class AuthController {
     @GetCurrentUser() user: User,
     @Res({ passthrough: true }) response: Response,
   ): Promise<AuthResponse> {
-    return await this.authService.loginUser(user, response);
+    console.log('=== LOGIN DEBUG ===');
+
+    const result = await this.authService.loginUser(user, response);
+
+    console.log('Response headers:', response.getHeaders());
+    console.log('Cookies being set:', response.getHeader('set-cookie'));
+
+    return result;
   }
 
   // REFRESH-TOKEN
@@ -59,5 +72,66 @@ export class AuthController {
     const refreshToken = request.cookies['authRefreshToken'];
 
     return await this.authService.refreshToken(refreshToken, user.id);
+  }
+
+  // LOG OUT
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  public async logout(
+    @GetCurrentUser() user: User,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    console.log('=== LOGOUT DEBUG START ===');
+    console.log('User ID:', user.id);
+    console.log('All cookies:', request.cookies);
+
+    // Read refresh token from httpOnly cookie
+    const refreshToken = request.cookies['authRefreshToken'];
+    console.log(
+      'Refresh token from cookie:',
+      refreshToken ? 'EXISTS' : 'NOT FOUND',
+    );
+
+    // Get environment-aware cookie options for clearing
+    const clearOptions = CookieHelper.getClearCookieOptions(this.configService);
+
+    if (!refreshToken) {
+      console.log('No refresh token found in cookie, clearing anyway');
+      response.clearCookie('authRefreshToken', clearOptions);
+      return {
+        status: true,
+        message: 'Logged out successfully (no token found)',
+      };
+    }
+
+    try {
+      console.log('Attempting to revoke refresh token in database...');
+
+      // Revoke the refresh token in database
+      const result = await this.authService.logout(user.id, refreshToken);
+
+      console.log('Token revocation result:', result);
+
+      // Clear the refresh token cookie
+      response.clearCookie('authRefreshToken', clearOptions);
+
+      console.log('=== LOGOUT DEBUG END (SUCCESS) ===');
+      return result;
+    } catch (error) {
+      console.error('=== LOGOUT ERROR ===');
+      console.error('Error during logout:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+
+      // Still clear the cookie even if revocation fails
+      response.clearCookie('authRefreshToken', clearOptions);
+
+      // Return success to allow frontend logout
+      return {
+        status: true,
+        message: 'Logged out successfully (token revocation failed)',
+      };
+    }
   }
 }

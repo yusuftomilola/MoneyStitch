@@ -49,6 +49,7 @@ export class FindOneRefreshTokenProvider {
           throw new UnauthorizedException('Refresh token is already revoked');
         }
 
+        console.log(tokenEntity);
         return tokenEntity;
       }
     }

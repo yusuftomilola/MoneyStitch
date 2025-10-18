@@ -3,10 +3,16 @@ import { DollarSign, X, Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useAuthState } from "@/lib/store/authStore";
+import { useLogoutUser } from "@/lib/query/hooks";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated } = useAuthState();
+  const logoutUser = useLogoutUser();
+
+  const handleLogout = () => {
+    logoutUser.mutate();
+  };
 
   return (
     <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
@@ -57,11 +63,13 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <Link href={"#"}>
-                  <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer">
-                    Logout
-                  </button>
-                </Link>
+                <button
+                  className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer"
+                  onClick={handleLogout}
+                  disabled={logoutUser.isPending}
+                >
+                  {logoutUser.isPending ? "Logging Out.." : "Logout"}
+                </button>
               </>
             ) : (
               <>
@@ -128,11 +136,13 @@ export default function Navbar() {
             <div className="flex space-x-3 pt-3 border-t border-gray-100">
               {isAuthenticated ? (
                 <>
-                  <Link href={"#"}>
-                    <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer">
-                      Logout
-                    </button>
-                  </Link>
+                  <button
+                    className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer"
+                    onClick={handleLogout}
+                    disabled={logoutUser.isPending}
+                  >
+                    {logoutUser.isPending ? "Logging Out.." : "Logout"}
+                  </button>
                 </>
               ) : (
                 <>

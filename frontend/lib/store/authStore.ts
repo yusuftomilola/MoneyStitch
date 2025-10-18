@@ -27,9 +27,26 @@ interface AuthActions {
   setLoading: (loading: boolean) => void;
   initializeAuth: () => void;
   clearAuth: () => void;
+
+  // Token Refresh Management
+  scheduleTokenRefresh: () => void;
+  cancelTokenRefresh: () => void;
 }
 
-type AuthStore = AuthState & AuthActions;
+type AuthStore = AuthState &
+  AuthActions & {
+    tokenExpiresAt: number | null;
+    refreshTimerId: NodeJS.Timeout | null;
+    isRefreshing: boolean;
+  };
+
+// calculate when the token expires (24 hours from now)
+const getTokenExpirationTime = (): number => {
+  return Date.now() + 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+};
+
+// Refresh token 5 minutes before it expires
+const REFRESH_BEFORE_EXPIRY = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 export const useAuthStore = create<AuthStore>()(
   devtools(
@@ -40,6 +57,9 @@ export const useAuthStore = create<AuthStore>()(
         accessToken: null,
         isAuthenticated: false,
         isLoading: false,
+        tokenExpiresAt: null,
+        refreshTimerId: null,
+        isRefreshing: false,
 
         // AUTHENTICATION ACTIONS
         login: async (data: LoginUser) => {
@@ -52,6 +72,7 @@ export const useAuthStore = create<AuthStore>()(
             );
 
             const { user, accessToken } = response;
+            const expiresAt = getTokenExpirationTime();
 
             // set the token in the api request headers authorization so that it always sends it to the backend when sending a request.
             apiClient.setToken(accessToken);
@@ -62,6 +83,7 @@ export const useAuthStore = create<AuthStore>()(
               accessToken,
               isAuthenticated: true,
               isLoading: false,
+              tokenExpiresAt: expiresAt,
             });
 
             // persist token to local storage and cookie for middleware usage
@@ -69,6 +91,12 @@ export const useAuthStore = create<AuthStore>()(
 
             // persist user to local storage
             storage.setUser(user);
+
+            // persist expires at to local storage
+            storage.setTokenExpiry(expiresAt);
+
+            // schedule automatic token refresh
+            get().scheduleTokenRefresh();
           } catch (error) {
             set({ isLoading: false });
             throw error;
@@ -83,6 +111,8 @@ export const useAuthStore = create<AuthStore>()(
               data
             );
 
+            const expiresAt = getTokenExpirationTime();
+
             apiClient.setToken(accessToken);
 
             set({
@@ -90,28 +120,47 @@ export const useAuthStore = create<AuthStore>()(
               accessToken,
               isAuthenticated: true,
               isLoading: false,
+              tokenExpiresAt: expiresAt,
             });
 
             storage.setToken(accessToken);
             storage.setUser(user);
+            storage.setTokenExpiry(expiresAt);
+
+            // Schedule automatic token refresh
+            get().scheduleTokenRefresh();
           } catch (error) {
             set({ isLoading: false });
             throw error;
           }
         },
         logout: () => {
+          // cancel any scheduled refresh
+          get().cancelTokenRefresh();
+
           set({
             user: null,
             accessToken: null,
             isAuthenticated: false,
             isLoading: false,
+            tokenExpiresAt: null,
+            refreshTimerId: null,
           });
           apiClient.setToken(null);
           storage.clear();
         },
         refreshAccessToken: async () => {
+          const state = get();
+
+          // prevent multiple simultaneous refresh attempts
+          if (state.isRefreshing) {
+            return;
+          }
+
           try {
-            const currentToken = get().accessToken;
+            set({ isRefreshing: true });
+
+            const currentToken = state.accessToken;
 
             if (!currentToken) {
               throw new Error("No token available");
@@ -122,6 +171,7 @@ export const useAuthStore = create<AuthStore>()(
             );
 
             const { accessToken, user } = response;
+            const expiresAt = getTokenExpirationTime();
 
             apiClient.setToken(accessToken);
 
@@ -129,13 +179,58 @@ export const useAuthStore = create<AuthStore>()(
               user,
               accessToken,
               isAuthenticated: true,
+              tokenExpiresAt: expiresAt,
+              isRefreshing: false,
             });
 
             storage.setToken(accessToken);
             storage.setUser(user);
+            storage.setTokenExpiry(expiresAt);
+
+            // Schedule next refresh
+            get().scheduleTokenRefresh();
           } catch (error) {
-            get().logout;
+            get().logout();
             throw error;
+          }
+        },
+
+        // SCHEDULE AUTOMATIC TOKEN REFRESH
+        scheduleTokenRefresh: () => {
+          const state = get();
+
+          // Cancel any existing timer
+          if (state.refreshTimerId) {
+            clearTimeout(state.refreshTimerId);
+          }
+
+          const expiresAt = state.tokenExpiresAt;
+
+          if (!expiresAt) return;
+
+          // Calculate when to refresh (5 minutes before expiry)
+          const refreshAt = expiresAt - REFRESH_BEFORE_EXPIRY;
+          const delay = refreshAt - Date.now();
+
+          // Only schedule if the delay is positive
+          if (delay > 0) {
+            const timerId = setTimeout(() => {
+              get().refreshAccessToken();
+            }, delay);
+
+            set({ refreshTimerId: timerId });
+          } else {
+            // Token is already expired or about to expire, refresh immediately
+            get().refreshAccessToken();
+          }
+        },
+
+        // Cancel scheduled token refresh
+        cancelTokenRefresh: () => {
+          const state = get();
+          if (state.refreshTimerId) {
+            clearTimeout(state.refreshTimerId);
+            set({ refreshTimerId: null });
           }
         },
 
@@ -176,23 +271,43 @@ export const useAuthStore = create<AuthStore>()(
           // Get the persisted data from localstorage
           const accessToken = storage.getToken();
           const user = storage.getUser();
+          const tokenExpiresAt = storage.getTokenExpiry();
 
-          if (accessToken && user) {
-            apiClient.setToken(accessToken);
+          if (accessToken && user && tokenExpiresAt) {
+            // check if token is still valid
+            if (tokenExpiresAt > Date.now()) {
+              apiClient.setToken(accessToken);
 
-            set({
-              user,
-              accessToken,
-              isAuthenticated: true,
-            });
+              set({
+                user,
+                accessToken,
+                isAuthenticated: true,
+                tokenExpiresAt,
+              });
+
+              // Schedule token refresh
+              get().scheduleTokenRefresh();
+            } else {
+              // Token expired, try to refresh
+              get()
+                .refreshAccessToken()
+                .catch(() => {
+                  // If refresh fails, clear auth
+                  storage.clear();
+                });
+            }
           }
         },
         clearAuth: () => {
+          get().cancelTokenRefresh();
+
           set({
             user: null,
             accessToken: null,
             isAuthenticated: false,
             isLoading: false,
+            tokenExpiresAt: null,
+            refreshTimerId: null,
           });
           apiClient.setToken(null);
           storage.clear();
@@ -204,6 +319,7 @@ export const useAuthStore = create<AuthStore>()(
           user: state.user,
           accessToken: state.accessToken,
           isAuthenticated: state.isAuthenticated,
+          tokenExpiresAt: state.tokenExpiresAt,
         }),
       }
     ),
@@ -219,6 +335,7 @@ export const useAuthState = () =>
       accessToken: state.accessToken,
       isAuthenticated: state.isAuthenticated,
       isLoading: state.isLoading,
+      isRefreshing: state.isRefreshing,
     }))
   );
 

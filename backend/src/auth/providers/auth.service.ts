@@ -6,6 +6,8 @@ import { LoginUserProvider } from './loginUser.provider';
 import { Request, Response } from 'express';
 import { AuthResponse } from '../interfaces/authResponse.interface';
 import { RefreshTokensProvider } from './refreshTokens.provider';
+import { RefreshTokenRepositoryOperations } from './RefreshTokenCrud.repository';
+import { LogoutResponse } from '../interfaces/logout.interface';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +17,8 @@ export class AuthService {
     private readonly loginUserProvider: LoginUserProvider,
 
     private readonly refreshTokensProvider: RefreshTokensProvider,
+
+    private readonly refreshTokenRepositoryOperations: RefreshTokenRepositoryOperations,
   ) {}
 
   // CREATE USER
@@ -47,5 +51,29 @@ export class AuthService {
     userId: string,
   ): Promise<AuthResponse> {
     return await this.refreshTokensProvider.refreshTokens(userId, refreshToken);
+  }
+
+  // LOG OUT
+  public async logout(
+    userId: string,
+    refreshToken: string,
+  ): Promise<LogoutResponse> {
+    console.log('=== AUTH SERVICE LOGOUT ===');
+    console.log('User ID:', userId);
+    console.log(
+      'Refresh token (first 20 chars):',
+      refreshToken?.substring(0, 20),
+    );
+
+    // Don't catch errors here - let them bubble up to the controller
+    // so we can see what's actually failing
+    const result =
+      await this.refreshTokenRepositoryOperations.revokeSingleRefreshToken(
+        userId,
+        refreshToken,
+      );
+
+    console.log('Revocation successful');
+    return result;
   }
 }

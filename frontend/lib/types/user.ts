@@ -41,3 +41,8 @@ export interface AuthResponse {
   user: User;
   accessToken: string;
 }
+
+export interface LogoutResponse {
+  status: boolean;
+  message: string;
+}
