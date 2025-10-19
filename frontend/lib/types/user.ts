@@ -46,3 +46,12 @@ export interface LogoutResponse {
   status: boolean;
   message: string;
 }
+
+export interface ForgotPasswordCredentials {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  status: string;
+  message: string;
+}
