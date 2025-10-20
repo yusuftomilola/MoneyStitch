@@ -9,6 +9,8 @@ import { FindOneUserByEmailProvider } from './providers/findOneUserByEmail.provi
 import { FindOneUserByIdProvider } from './providers/findOneUserById.provider';
 import { ValidateUserProvider } from './providers/validateUser.provider';
 import { GetUsersProvider } from './providers/getusers.provider';
+import { ForgotPasswordResetTokenProvider } from './providers/forgotPassword.provider';
+import { GenerateRandomTokenProvider } from './providers/generateRandomToken.provider';
 
 @Module({
   imports: [forwardRef(() => AuthModule), TypeOrmModule.forFeature([User])],
@@ -20,6 +22,8 @@ import { GetUsersProvider } from './providers/getusers.provider';
     FindOneUserByIdProvider,
     ValidateUserProvider,
     GetUsersProvider,
+    ForgotPasswordResetTokenProvider,
+    GenerateRandomTokenProvider,
   ],
   exports: [UsersService],
 })

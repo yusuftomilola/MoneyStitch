@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/providers/users.service';
@@ -8,9 +8,14 @@ import { AuthResponse } from '../interfaces/authResponse.interface';
 import { RefreshTokensProvider } from './refreshTokens.provider';
 import { RefreshTokenRepositoryOperations } from './RefreshTokenCrud.repository';
 import { LogoutResponse } from '../interfaces/logout.interface';
+import { ForgotPasswordDto } from '../dto/forgotPassword.dto';
+import { ForgotPasswordResponse } from '../interfaces/authResponses.interface';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly usersService: UsersService,
 
@@ -19,6 +24,8 @@ export class AuthService {
     private readonly refreshTokensProvider: RefreshTokensProvider,
 
     private readonly refreshTokenRepositoryOperations: RefreshTokenRepositoryOperations,
+
+    private readonly emailService: EmailService,
   ) {}
 
   // CREATE USER
@@ -75,5 +82,44 @@ export class AuthService {
 
     console.log('Revocation successful');
     return result;
+  }
+
+  // FORGOT PASSWORD
+  public async forgotPassword(
+    forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<ForgotPasswordResponse> {
+    try {
+      const result =
+        await this.usersService.forgotPasswordResetToken(forgotPasswordDto);
+
+      if (!result) {
+        this.logger.log(
+          `Password reset requested for non-existent email: ${forgotPasswordDto.email}`,
+        );
+        return {
+          status: 'success',
+          message:
+            'If an account with that email exists, a password reset link has been sent.',
+        };
+      }
+
+      const { hashedToken, user } = result;
+
+      await this.emailService.sendPasswordResetEmail(user, hashedToken);
+      this.logger.log(`Password reset email sent to ${user.email}`);
+
+      return {
+        status: 'success',
+        message:
+          'If an account with that email exists, a password reset link has been sent.',
+      };
+    } catch (error) {
+      this.logger.error('Failed to send password reset email', error);
+      return {
+        status: 'success',
+        message:
+          'If an account with that email exists, a password reset link has been sent.',
+      };
+    }
   }
 }

@@ -68,6 +68,23 @@ export class User {
   })
   isActive: boolean;
 
+  @Column({
+    default: false,
+  })
+  isEmailVerified: boolean;
+
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  emailVerificationToken?: string;
+
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  emailVerificationExpiresIn?: Date;
+
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   @Exclude()
   refreshTokens: RefreshToken[];

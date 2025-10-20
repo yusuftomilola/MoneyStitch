@@ -115,18 +115,18 @@ const ForgotPasswordForm = () => {
                       <CheckCircle className="w-6 h-6 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-base text-emerald-800 font-semibold mb-2">
-                        Email Sent Successfully
+                      <p className="text-sm text-emerald-800  mb-2">
+                        <span className="font-semibold">
+                          If an account with that email exists,
+                        </span>{" "}
+                        a reset link has been sent.
                       </p>
-                      <p className="text-sm text-emerald-700 leading-relaxed mb-3">
-                        If an account with that email exists, a reset link has
-                        been sent.
-                      </p>
+
                       <p className="text-sm text-emerald-700 leading-relaxed">
                         Please check your inbox at{" "}
                         <span className="font-semibold">{watch("email")}</span>{" "}
                         and follow the instructions to reset your password. The
-                        link will expire in 15 mins.
+                        link will expire in 1 hour.
                       </p>
                     </div>
                   </div>

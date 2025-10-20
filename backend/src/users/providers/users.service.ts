@@ -8,6 +8,8 @@ import { ValidateUserProvider } from './validateUser.provider';
 import { GetUsersProvider } from './getusers.provider';
 import { Response } from 'express';
 import { AuthResponse } from 'src/auth/interfaces/authResponse.interface';
+import { ForgotPasswordDto } from 'src/auth/dto/forgotPassword.dto';
+import { ForgotPasswordResetTokenProvider } from './forgotPassword.provider';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +19,7 @@ export class UsersService {
     private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
     private readonly validateUserProvider: ValidateUserProvider,
     private readonly getusersProvider: GetUsersProvider,
+    private readonly forgotPasswordResetProvider: ForgotPasswordResetTokenProvider,
   ) {}
 
   // FIND USER BY ID
@@ -48,5 +51,12 @@ export class UsersService {
   // GET ALL USERS
   public async getUsers(): Promise<User[]> {
     return await this.getusersProvider.getUsers();
+  }
+
+  // FORGOT PASSWORD
+  public async forgotPasswordResetToken(forgotPasswordDto: ForgotPasswordDto) {
+    return await this.forgotPasswordResetProvider.setForgotPasswordResetToken(
+      forgotPasswordDto.email,
+    );
   }
 }

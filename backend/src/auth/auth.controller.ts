@@ -21,6 +21,8 @@ import { RefreshTokenGuard } from './guards/refreshToken.guard';
 import { LogoutResponse } from './interfaces/logout.interface';
 import { CookieHelper } from 'src/common/helpers/cookie.helper';
 import { ConfigService } from '@nestjs/config';
+import { ForgotPasswordDto } from './dto/forgotPassword.dto';
+import { ForgotPasswordResponse } from './interfaces/authResponses.interface';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -133,5 +135,15 @@ export class AuthController {
         message: 'Logged out successfully (token revocation failed)',
       };
     }
+  }
+
+  // FORGOT PASSWORD
+  @IsPublic()
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  public async forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<ForgotPasswordResponse> {
+    return await this.authService.forgotPassword(forgotPasswordDto);
   }
 }
