@@ -28,7 +28,7 @@ export const registerSchema = z.object({
   password: z
     .string("Password must be a string")
     .min(8, "Password must be atleast 8 characters")
-    .max(80, "Too long")
+    .max(80, "Password is too long")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_.]).+$/,
       "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character"

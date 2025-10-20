@@ -55,3 +55,13 @@ export interface ForgotPasswordResponse {
   status: string;
   message: string;
 }
+
+export interface ResetPasswordCredentials {
+  token: string;
+  newPassword: string;
+}
+
+export interface ResetPasswordResponse {
+  status: string;
+  message: string;
+}

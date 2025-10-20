@@ -5,48 +5,62 @@ import {
   Lock,
   Eye,
   EyeOff,
-  DollarSign,
   CheckCircle,
   AlertCircle,
   Check,
   X,
 } from "lucide-react";
+import z from "zod";
+import { resetPasswordSchema } from "@/lib/schemas/resetPasswordSchema";
+import { useSearchParams } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 
 const ResetPasswordForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [resetData, setResetData] = useState({
-    password: "",
-    confirmPassword: "",
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") || "";
+  type ResetPasswordFormFields = z.infer<typeof resetPasswordSchema>;
+  const {
+    watch,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetPasswordFormFields>({
+    resolver: zodResolver(resetPasswordSchema),
   });
+
+  const handleResetPasswordForm: SubmitHandler<
+    ResetPasswordFormFields
+  > = async (data) => {
+    try {
+      console.log(data);
+      console.log({
+        token,
+        newPassword: data.newPassword,
+      });
+    } catch (error) {}
+  };
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const password = watch("password", "");
+  const newPassword = watch("newPassword", "");
 
   // Password validation criteria
   const passwordCriteria = {
-    minLength: resetData.password.length >= 8,
-    hasUpperCase: /[A-Z]/.test(resetData.password),
-    hasLowerCase: /[a-z]/.test(resetData.password),
-    hasNumber: /[0-9]/.test(resetData.password),
-    hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(resetData.password),
+    minLength: password.length >= 8,
+    hasUpperCase: /[A-Z]/.test(password),
+    hasLowerCase: /[a-z]/.test(password),
+    hasNumber: /[0-9]/.test(password),
+    hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
   };
 
   const isPasswordValid = Object.values(passwordCriteria).every(Boolean);
-  const passwordsMatch =
-    resetData.password === resetData.confirmPassword &&
-    resetData.confirmPassword !== "";
-
-  const handleResetPassword = () => {
-    if (!isPasswordValid) {
-      alert("Please meet all password requirements");
-      return;
-    }
-    if (!passwordsMatch) {
-      alert("Passwords do not match");
-      return;
-    }
-    console.log("Reset password:", resetData);
-    setIsSubmitted(true);
-  };
+  const passwordsMatch = password === newPassword && newPassword !== "";
 
   // Password strength indicator
   const getPasswordStrength = () => {
@@ -79,13 +93,13 @@ const ResetPasswordForm = () => {
                 with your new password.
               </p>
 
-              <button
-                onClick={() => (window.location.href = "/login")}
+              <Link
+                href={"/login"}
                 className="w-full bg-emerald-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-emerald-700 transition-all transform hover:scale-[1.02] flex items-center justify-center space-x-2"
               >
                 <span>Sign In Now</span>
                 <ArrowRight className="w-5 h-5" />
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -99,14 +113,6 @@ const ResetPasswordForm = () => {
         <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="flex items-center justify-center space-x-2 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                <DollarSign className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-3xl font-bold text-slate-800">
-                MoneyStitch
-              </span>
-            </div>
             <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
               Create New Password
             </h1>
@@ -116,7 +122,10 @@ const ResetPasswordForm = () => {
           </div>
 
           {/* Reset Password Form */}
-          <div className="space-y-6">
+          <form
+            className="space-y-6"
+            onSubmit={handleSubmit(handleResetPasswordForm)}
+          >
             {/* Password Field */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -126,14 +135,12 @@ const ResetPasswordForm = () => {
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  value={resetData.password}
-                  onChange={(e) =>
-                    setResetData({ ...resetData, password: e.target.value })
-                  }
+                  {...register("password")}
                   className="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-20 outline-none transition-all text-slate-700"
                   placeholder="Create a strong password"
                   required
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -147,8 +154,11 @@ const ResetPasswordForm = () => {
                 </button>
               </div>
 
+              {errors.password && (
+                <span className="text-red-500">{errors.password.message}</span>
+              )}
               {/* Password Strength Indicator */}
-              {resetData.password && (
+              {password && (
                 <div className="mt-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-slate-600">
@@ -273,37 +283,34 @@ const ResetPasswordForm = () => {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={resetData.confirmPassword}
-                  onChange={(e) =>
-                    setResetData({
-                      ...resetData,
-                      confirmPassword: e.target.value,
-                    })
-                  }
+                  type={showNewPassword ? "text" : "password"}
+                  {...register("newPassword")}
                   className="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-20 outline-none transition-all text-slate-700"
                   placeholder="Confirm your password"
                   required
                 />
                 <button
                   type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  onClick={() => setShowNewPassword(!showNewPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
-                  {showConfirmPassword ? (
+                  {showNewPassword ? (
                     <EyeOff className="w-5 h-5" />
                   ) : (
                     <Eye className="w-5 h-5" />
                   )}
                 </button>
               </div>
-              {resetData.confirmPassword && !passwordsMatch && (
+              {errors.password && (
+                <span className="text-red-500">{errors.password.message}</span>
+              )}
+              {newPassword && !passwordsMatch && (
                 <div className="mt-2 flex items-center space-x-2 text-red-600">
                   <AlertCircle className="w-4 h-4" />
                   <span className="text-sm">Passwords do not match</span>
                 </div>
               )}
-              {passwordsMatch && resetData.confirmPassword && (
+              {passwordsMatch && newPassword && (
                 <div className="mt-2 flex items-center space-x-2 text-emerald-600">
                   <CheckCircle className="w-4 h-4" />
                   <span className="text-sm">Passwords match</span>
@@ -313,7 +320,7 @@ const ResetPasswordForm = () => {
 
             {/* Reset Password Button */}
             <button
-              onClick={handleResetPassword}
+              type="submit"
               disabled={!isPasswordValid || !passwordsMatch}
               className={`w-full py-3 px-4 rounded-xl font-semibold focus:ring-4 focus:ring-emerald-500 focus:ring-opacity-20 transition-all transform hover:scale-[1.02] flex items-center justify-center space-x-2 ${
                 isPasswordValid && passwordsMatch
@@ -324,15 +331,18 @@ const ResetPasswordForm = () => {
               <span>Reset Password</span>
               <ArrowRight className="w-5 h-5" />
             </button>
-          </div>
+          </form>
 
           {/* Back to Login */}
           <div className="mt-8 pt-6 border-t border-slate-100 text-center">
             <p className="text-slate-600">
               Remember your password?{" "}
-              <button className="text-emerald-600 hover:text-emerald-700 font-semibold">
+              <Link
+                href={"/login"}
+                className="text-emerald-600 hover:text-emerald-700 font-semibold"
+              >
                 Sign in here
-              </button>
+              </Link>
             </p>
           </div>
         </div>
