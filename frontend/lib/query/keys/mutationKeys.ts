@@ -3,4 +3,5 @@ export const mutationKeys = {
   loginUser: ["loginUser"] as const,
   logoutUser: ["logoutUser"] as const,
   forgotPassword: ["forgotPassword"] as const,
+  resetPassword: ["resetPassword"] as const,
 };

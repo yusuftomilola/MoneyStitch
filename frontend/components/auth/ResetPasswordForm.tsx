@@ -16,8 +16,11 @@ import { useSearchParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useResetPassword } from "@/lib/query/hooks";
 
 const ResetPasswordForm = () => {
+  const resetPasswordMutation = useResetPassword();
+  const { isSuccess, isPending } = resetPasswordMutation;
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
   type ResetPasswordFormFields = z.infer<typeof resetPasswordSchema>;
@@ -33,22 +36,17 @@ const ResetPasswordForm = () => {
   const handleResetPasswordForm: SubmitHandler<
     ResetPasswordFormFields
   > = async (data) => {
-    try {
-      console.log(data);
-      console.log({
-        token,
-        newPassword: data.newPassword,
-      });
-    } catch (error) {}
+    resetPasswordMutation.mutate({
+      token,
+      newPassword: data.newPassword,
+    });
   };
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const password = watch("password", "");
   const newPassword = watch("newPassword", "");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   // Password validation criteria
   const passwordCriteria = {
@@ -74,7 +72,7 @@ const ResetPasswordForm = () => {
 
   const passwordStrength = getPasswordStrength();
 
-  if (isSubmitted) {
+  if (isSuccess) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-slate-50 flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full">
@@ -321,14 +319,14 @@ const ResetPasswordForm = () => {
             {/* Reset Password Button */}
             <button
               type="submit"
-              disabled={!isPasswordValid || !passwordsMatch}
+              disabled={!isPasswordValid || !passwordsMatch || isPending}
               className={`w-full py-3 px-4 rounded-xl font-semibold focus:ring-4 focus:ring-emerald-500 focus:ring-opacity-20 transition-all transform hover:scale-[1.02] flex items-center justify-center space-x-2 ${
                 isPasswordValid && passwordsMatch
                   ? "bg-emerald-600 text-white hover:bg-emerald-700 cursor-pointer"
                   : "bg-slate-300 text-slate-500 cursor-not-allowed"
               }`}
             >
-              <span>Reset Password</span>
+              <span>{isPending ? "Resetting..." : "Reset Password"}</span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </form>

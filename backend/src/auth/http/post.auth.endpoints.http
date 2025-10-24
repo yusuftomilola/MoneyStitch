@@ -33,3 +33,11 @@ Content-Type: application/json
 {
     "email": "adewale@gmail.com"
 }
+
+// RESET PASSWORD
+POST http://localhost:5000/api/v1/auth/reset-password
+Content-Type: application/json
+{
+    "token": "jfjfeefwefewf",
+    "newPassword": "Adetomi.54"
+}

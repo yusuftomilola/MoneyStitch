@@ -51,7 +51,7 @@ export class ForgotPasswordResetTokenProvider {
     await this.usersRepository.save(user);
 
     return {
-      hashedToken,
+      plainToken,
       user,
     };
   }

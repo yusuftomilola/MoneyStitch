@@ -22,7 +22,11 @@ import { LogoutResponse } from './interfaces/logout.interface';
 import { CookieHelper } from 'src/common/helpers/cookie.helper';
 import { ConfigService } from '@nestjs/config';
 import { ForgotPasswordDto } from './dto/forgotPassword.dto';
-import { ForgotPasswordResponse } from './interfaces/authResponses.interface';
+import {
+  ForgotPasswordResponse,
+  ResetPasswordResponse,
+} from './interfaces/authResponses.interface';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -145,5 +149,15 @@ export class AuthController {
     @Body() forgotPasswordDto: ForgotPasswordDto,
   ): Promise<ForgotPasswordResponse> {
     return await this.authService.forgotPassword(forgotPasswordDto);
+  }
+
+  // RESET PASSWORD
+  @IsPublic()
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  public async resetpassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ): Promise<ResetPasswordResponse> {
+    return await this.authService.resetPassword(resetPasswordDto);
   }
 }

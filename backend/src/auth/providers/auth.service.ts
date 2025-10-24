@@ -9,8 +9,12 @@ import { RefreshTokensProvider } from './refreshTokens.provider';
 import { RefreshTokenRepositoryOperations } from './RefreshTokenCrud.repository';
 import { LogoutResponse } from '../interfaces/logout.interface';
 import { ForgotPasswordDto } from '../dto/forgotPassword.dto';
-import { ForgotPasswordResponse } from '../interfaces/authResponses.interface';
+import {
+  ForgotPasswordResponse,
+  ResetPasswordResponse,
+} from '../interfaces/authResponses.interface';
 import { EmailService } from 'src/email/email.service';
+import { ResetPasswordDto } from '../dto/resetPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -103,9 +107,9 @@ export class AuthService {
         };
       }
 
-      const { hashedToken, user } = result;
+      const { plainToken, user } = result;
 
-      await this.emailService.sendPasswordResetEmail(user, hashedToken);
+      await this.emailService.sendPasswordResetEmail(user, plainToken);
       this.logger.log(`Password reset email sent to ${user.email}`);
 
       return {
@@ -121,5 +125,12 @@ export class AuthService {
           'If an account with that email exists, a password reset link has been sent.',
       };
     }
+  }
+
+  // RESET PASSWORD
+  public async resetPassword(
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<ResetPasswordResponse> {
+    return await this.usersService.resetPassword(resetPasswordDto);
   }
 }

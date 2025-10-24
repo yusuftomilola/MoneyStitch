@@ -11,9 +11,15 @@ import { ValidateUserProvider } from './providers/validateUser.provider';
 import { GetUsersProvider } from './providers/getusers.provider';
 import { ForgotPasswordResetTokenProvider } from './providers/forgotPassword.provider';
 import { GenerateRandomTokenProvider } from './providers/generateRandomToken.provider';
+import { EmailModule } from 'src/email/email.module';
+import { ResetPasswordProvider } from './providers/resetPassword.provider';
 
 @Module({
-  imports: [forwardRef(() => AuthModule), TypeOrmModule.forFeature([User])],
+  imports: [
+    forwardRef(() => AuthModule),
+    TypeOrmModule.forFeature([User]),
+    EmailModule,
+  ],
   controllers: [UsersController],
   providers: [
     UsersService,
@@ -24,6 +30,7 @@ import { GenerateRandomTokenProvider } from './providers/generateRandomToken.pro
     GetUsersProvider,
     ForgotPasswordResetTokenProvider,
     GenerateRandomTokenProvider,
+    ResetPasswordProvider,
   ],
   exports: [UsersService],
 })

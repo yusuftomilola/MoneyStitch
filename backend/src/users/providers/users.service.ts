@@ -10,6 +10,9 @@ import { Response } from 'express';
 import { AuthResponse } from 'src/auth/interfaces/authResponse.interface';
 import { ForgotPasswordDto } from 'src/auth/dto/forgotPassword.dto';
 import { ForgotPasswordResetTokenProvider } from './forgotPassword.provider';
+import { ResetPasswordProvider } from './resetPassword.provider';
+import { ResetPasswordResponse } from 'src/auth/interfaces/authResponses.interface';
+import { ResetPasswordDto } from 'src/auth/dto/resetPassword.dto';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +23,7 @@ export class UsersService {
     private readonly validateUserProvider: ValidateUserProvider,
     private readonly getusersProvider: GetUsersProvider,
     private readonly forgotPasswordResetProvider: ForgotPasswordResetTokenProvider,
+    private readonly resetPasswordProvider: ResetPasswordProvider,
   ) {}
 
   // FIND USER BY ID
@@ -58,5 +62,12 @@ export class UsersService {
     return await this.forgotPasswordResetProvider.setForgotPasswordResetToken(
       forgotPasswordDto.email,
     );
+  }
+
+  // RESET PASSWORD
+  public async resetPassword(
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<ResetPasswordResponse> {
+    return await this.resetPasswordProvider.resetPassword(resetPasswordDto);
   }
 }
