@@ -11,6 +11,8 @@ import { ConfigService } from '@nestjs/config';
 import { GenerateTokensProvider } from 'src/auth/providers/generateTokens.provider';
 import { RefreshTokenRepositoryOperations } from 'src/auth/providers/RefreshTokenCrud.repository';
 import { CookieHelper } from 'src/common/helpers/cookie.helper';
+import { EmailService } from 'src/email/email.service';
+import { EmailVerificationTokenProvider } from './emailVerificationToken.provider';
 
 @Injectable()
 export class CreateUserProvider {
@@ -25,6 +27,10 @@ export class CreateUserProvider {
     private readonly generateTokensProvider: GenerateTokensProvider,
 
     private readonly refreshTokenRepositoryOperations: RefreshTokenRepositoryOperations,
+
+    private readonly emailService: EmailService,
+
+    private readonly emailVerificationTokenProvider: EmailVerificationTokenProvider,
   ) {}
 
   public async createUser(
@@ -50,6 +56,7 @@ export class CreateUserProvider {
 
       user = await this.userRepository.save(user);
 
+      // generate tokens
       const { accessToken, refreshToken } =
         await this.generateTokensProvider.generateBothTokens(user);
 
@@ -58,6 +65,18 @@ export class CreateUserProvider {
         refreshToken,
       );
 
+      // send verification email
+      const plainEmailVerificationToken =
+        await this.emailVerificationTokenProvider.getEmailVerificationToken(
+          user,
+        );
+
+      await this.emailService.sendVerificationEmail(
+        user,
+        plainEmailVerificationToken,
+      );
+
+      // save refresh token in client cookie
       const jwtExpirationMs = parseInt(
         this.configService.get<string>('JWT_REFRESH_EXPIRATION') || '604800000',
       ); // 7 DAYS in milliseconds

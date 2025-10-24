@@ -12,9 +12,11 @@ import { ForgotPasswordDto } from '../dto/forgotPassword.dto';
 import {
   ForgotPasswordResponse,
   ResetPasswordResponse,
+  VerifyEmailResponse,
 } from '../interfaces/authResponses.interface';
 import { EmailService } from 'src/email/email.service';
 import { ResetPasswordDto } from '../dto/resetPassword.dto';
+import { VerifyEmailDto } from '../dto/verifyEmail.dto';
 
 @Injectable()
 export class AuthService {
@@ -132,5 +134,12 @@ export class AuthService {
     resetPasswordDto: ResetPasswordDto,
   ): Promise<ResetPasswordResponse> {
     return await this.usersService.resetPassword(resetPasswordDto);
+  }
+
+  // VERIFY EMAIL
+  public async verifyEmail(
+    verifyEmailDto: VerifyEmailDto,
+  ): Promise<VerifyEmailResponse> {
+    return await this.usersService.verifyEmail(verifyEmailDto);
   }
 }

@@ -13,6 +13,8 @@ import { ForgotPasswordResetTokenProvider } from './providers/forgotPassword.pro
 import { GenerateRandomTokenProvider } from './providers/generateRandomToken.provider';
 import { EmailModule } from 'src/email/email.module';
 import { ResetPasswordProvider } from './providers/resetPassword.provider';
+import { EmailVerificationTokenProvider } from './providers/emailVerificationToken.provider';
+import { VerifyEmailProvider } from './providers/verifyEmail.provider';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { ResetPasswordProvider } from './providers/resetPassword.provider';
     ForgotPasswordResetTokenProvider,
     GenerateRandomTokenProvider,
     ResetPasswordProvider,
+    EmailVerificationTokenProvider,
+    VerifyEmailProvider,
   ],
   exports: [UsersService],
 })

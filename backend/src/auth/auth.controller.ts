@@ -25,8 +25,10 @@ import { ForgotPasswordDto } from './dto/forgotPassword.dto';
 import {
   ForgotPasswordResponse,
   ResetPasswordResponse,
+  VerifyEmailResponse,
 } from './interfaces/authResponses.interface';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { VerifyEmailDto } from './dto/verifyEmail.dto';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -159,5 +161,15 @@ export class AuthController {
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<ResetPasswordResponse> {
     return await this.authService.resetPassword(resetPasswordDto);
+  }
+
+  // VERIFY EMAIL
+  @IsPublic()
+  @Post('verify-email')
+  @HttpCode(HttpStatus.OK)
+  public async verifyEmail(
+    @Body() verifyEmailDto: VerifyEmailDto,
+  ): Promise<VerifyEmailResponse> {
+    return await this.authService.verifyEmail(verifyEmailDto);
   }
 }

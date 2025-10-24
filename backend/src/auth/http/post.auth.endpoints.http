@@ -41,3 +41,10 @@ Content-Type: application/json
     "token": "jfjfeefwefewf",
     "newPassword": "Adetomi.54"
 }
+
+// VERIFY EMAIL
+POST http://localhost:5000/api/v1/auth/verify-email
+Content-Type: application/json
+{
+    "token": "x41byi4uiwovx7ph801x7d"
+}

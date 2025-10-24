@@ -7,3 +7,8 @@ export interface ResetPasswordResponse {
   status: string;
   message: string;
 }
+
+export interface VerifyEmailResponse {
+  status: string;
+  message: string;
+}

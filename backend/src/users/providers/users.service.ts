@@ -11,8 +11,13 @@ import { AuthResponse } from 'src/auth/interfaces/authResponse.interface';
 import { ForgotPasswordDto } from 'src/auth/dto/forgotPassword.dto';
 import { ForgotPasswordResetTokenProvider } from './forgotPassword.provider';
 import { ResetPasswordProvider } from './resetPassword.provider';
-import { ResetPasswordResponse } from 'src/auth/interfaces/authResponses.interface';
+import {
+  ResetPasswordResponse,
+  VerifyEmailResponse,
+} from 'src/auth/interfaces/authResponses.interface';
 import { ResetPasswordDto } from 'src/auth/dto/resetPassword.dto';
+import { VerifyEmailDto } from 'src/auth/dto/verifyEmail.dto';
+import { VerifyEmailProvider } from './verifyEmail.provider';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +29,7 @@ export class UsersService {
     private readonly getusersProvider: GetUsersProvider,
     private readonly forgotPasswordResetProvider: ForgotPasswordResetTokenProvider,
     private readonly resetPasswordProvider: ResetPasswordProvider,
+    private readonly verifyEmailProvider: VerifyEmailProvider,
   ) {}
 
   // FIND USER BY ID
@@ -69,5 +75,12 @@ export class UsersService {
     resetPasswordDto: ResetPasswordDto,
   ): Promise<ResetPasswordResponse> {
     return await this.resetPasswordProvider.resetPassword(resetPasswordDto);
+  }
+
+  // VERIFY EMAIL
+  public async verifyEmail(
+    verifyEmailDto: VerifyEmailDto,
+  ): Promise<VerifyEmailResponse> {
+    return await this.verifyEmailProvider.verifyEmail(verifyEmailDto);
   }
 }
