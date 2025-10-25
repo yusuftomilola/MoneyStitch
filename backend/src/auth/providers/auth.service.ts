@@ -11,6 +11,7 @@ import { LogoutResponse } from '../interfaces/logout.interface';
 import { ForgotPasswordDto } from '../dto/forgotPassword.dto';
 import {
   ForgotPasswordResponse,
+  ResendVerifyEmailResponse,
   ResetPasswordResponse,
   VerifyEmailResponse,
 } from '../interfaces/authResponses.interface';
@@ -141,5 +142,12 @@ export class AuthService {
     verifyEmailDto: VerifyEmailDto,
   ): Promise<VerifyEmailResponse> {
     return await this.usersService.verifyEmail(verifyEmailDto);
+  }
+
+  // RESEND VERIFY EMAIL
+  public async ResendVerifyEmail(
+    user: User,
+  ): Promise<ResendVerifyEmailResponse> {
+    return await this.usersService.resendVerifyEmail(user);
   }
 }

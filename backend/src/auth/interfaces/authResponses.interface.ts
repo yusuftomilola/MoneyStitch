@@ -12,3 +12,8 @@ export interface VerifyEmailResponse {
   status: string;
   message: string;
 }
+
+export interface ResendVerifyEmailResponse {
+  status: string;
+  message: string;
+}

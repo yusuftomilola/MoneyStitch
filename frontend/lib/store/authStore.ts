@@ -20,6 +20,7 @@ interface AuthActions {
 
   //User actions
   updateProfile: (userData: Partial<User>) => Promise<void>;
+  updateEmailVerificationStatus: (isVerified: boolean) => void;
 
   // State management actions
   setUser: (user: User | null) => void;
@@ -256,6 +257,21 @@ export const useAuthStore = create<AuthStore>()(
           }
         },
 
+        // NEW: Update email verification status
+        updateEmailVerificationStatus: (isVerified: boolean) => {
+          const currentUser = get().user;
+
+          if (currentUser) {
+            const updatedUser = {
+              ...currentUser,
+              isEmailVerified: isVerified,
+            };
+
+            set({ user: updatedUser });
+            storage.setUser(updatedUser);
+          }
+        },
+
         // STATE MANAGEMENT ACTIONS
         setUser: (user: User | null) => {
           set({ user, isAuthenticated: !!user });
@@ -346,6 +362,7 @@ export const useAuthActions = () =>
     logout: state.logout,
     refreshAccessToken: state.refreshAccessToken,
     updateProfile: state.updateProfile,
+    updateEmailVerificationStatus: state.updateEmailVerificationStatus, // NEW
     initializeAuth: state.initializeAuth,
     clearAuth: state.clearAuth,
   }));

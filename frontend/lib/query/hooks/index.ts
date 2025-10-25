@@ -3,6 +3,7 @@ import { useLoginUser } from "./auth/useLoginUser";
 import { useLogoutUser } from "./auth/useLogoutUser";
 import { useForgotPassword } from "./auth/useForgotPassword";
 import { useResetPassword } from "./auth/useResetPassword";
+import { useVerifyEmail } from "./auth/useVerifyEmail";
 
 export {
   useRegisterUser,
@@ -10,4 +11,5 @@ export {
   useLogoutUser,
   useForgotPassword,
   useResetPassword,
+  useVerifyEmail,
 };

@@ -24,6 +24,7 @@ import { ConfigService } from '@nestjs/config';
 import { ForgotPasswordDto } from './dto/forgotPassword.dto';
 import {
   ForgotPasswordResponse,
+  ResendVerifyEmailResponse,
   ResetPasswordResponse,
   VerifyEmailResponse,
 } from './interfaces/authResponses.interface';
@@ -171,5 +172,14 @@ export class AuthController {
     @Body() verifyEmailDto: VerifyEmailDto,
   ): Promise<VerifyEmailResponse> {
     return await this.authService.verifyEmail(verifyEmailDto);
+  }
+
+  // RESEND VERIFICATION EMAIL
+  @Post('resend-verify-email')
+  @HttpCode(HttpStatus.OK)
+  public async resendVerifyEmail(
+    @GetCurrentUser() user: User,
+  ): Promise<ResendVerifyEmailResponse> {
+    return await this.authService.ResendVerifyEmail(user);
   }
 }

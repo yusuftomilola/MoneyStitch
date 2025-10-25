@@ -65,3 +65,12 @@ export interface ResetPasswordResponse {
   status: string;
   message: string;
 }
+
+export interface VerifyEmailCredentials {
+  token: string;
+}
+
+export interface VerifyEmailResponse {
+  status: string;
+  message: string;
+}

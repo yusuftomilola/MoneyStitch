@@ -12,12 +12,14 @@ import { ForgotPasswordDto } from 'src/auth/dto/forgotPassword.dto';
 import { ForgotPasswordResetTokenProvider } from './forgotPassword.provider';
 import { ResetPasswordProvider } from './resetPassword.provider';
 import {
+  ResendVerifyEmailResponse,
   ResetPasswordResponse,
   VerifyEmailResponse,
 } from 'src/auth/interfaces/authResponses.interface';
 import { ResetPasswordDto } from 'src/auth/dto/resetPassword.dto';
 import { VerifyEmailDto } from 'src/auth/dto/verifyEmail.dto';
 import { VerifyEmailProvider } from './verifyEmail.provider';
+import { ResendEmailVerificationProvider } from './resendVerifyEmail.provider';
 
 @Injectable()
 export class UsersService {
@@ -30,6 +32,7 @@ export class UsersService {
     private readonly forgotPasswordResetProvider: ForgotPasswordResetTokenProvider,
     private readonly resetPasswordProvider: ResetPasswordProvider,
     private readonly verifyEmailProvider: VerifyEmailProvider,
+    private readonly resendVerifyEmailProvider: ResendEmailVerificationProvider,
   ) {}
 
   // FIND USER BY ID
@@ -82,5 +85,12 @@ export class UsersService {
     verifyEmailDto: VerifyEmailDto,
   ): Promise<VerifyEmailResponse> {
     return await this.verifyEmailProvider.verifyEmail(verifyEmailDto);
+  }
+
+  // RESEND VERIFY USER EMAIL
+  public async resendVerifyEmail(
+    user: User,
+  ): Promise<ResendVerifyEmailResponse> {
+    return await this.resendVerifyEmailProvider.resendEmailVerification(user);
   }
 }
