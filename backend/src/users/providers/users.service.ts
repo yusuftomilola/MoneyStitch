@@ -12,6 +12,7 @@ import { ForgotPasswordDto } from 'src/auth/dto/forgotPassword.dto';
 import { ForgotPasswordResetTokenProvider } from './forgotPassword.provider';
 import { ResetPasswordProvider } from './resetPassword.provider';
 import {
+  ChangePasswordResponse,
   ResendVerifyEmailResponse,
   ResetPasswordResponse,
   VerifyEmailResponse,
@@ -20,6 +21,8 @@ import { ResetPasswordDto } from 'src/auth/dto/resetPassword.dto';
 import { VerifyEmailDto } from 'src/auth/dto/verifyEmail.dto';
 import { VerifyEmailProvider } from './verifyEmail.provider';
 import { ResendEmailVerificationProvider } from './resendVerifyEmail.provider';
+import { ChangePasswordDto } from 'src/auth/dto/changeUserPassword.dto';
+import { ChangePasswordProvider } from './changeUserPassword.provider';
 
 @Injectable()
 export class UsersService {
@@ -33,6 +36,7 @@ export class UsersService {
     private readonly resetPasswordProvider: ResetPasswordProvider,
     private readonly verifyEmailProvider: VerifyEmailProvider,
     private readonly resendVerifyEmailProvider: ResendEmailVerificationProvider,
+    private readonly changePasswordProvider: ChangePasswordProvider,
   ) {}
 
   // FIND USER BY ID
@@ -92,5 +96,16 @@ export class UsersService {
     user: User,
   ): Promise<ResendVerifyEmailResponse> {
     return await this.resendVerifyEmailProvider.resendEmailVerification(user);
+  }
+
+  // CHANGE PASSWORD
+  public async changePassword(
+    userId: string,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<ChangePasswordResponse> {
+    return await this.changePasswordProvider.changePassword(
+      userId,
+      changePasswordDto,
+    );
   }
 }

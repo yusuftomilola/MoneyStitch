@@ -16,6 +16,7 @@ import { ResetPasswordProvider } from './providers/resetPassword.provider';
 import { EmailVerificationTokenProvider } from './providers/emailVerificationToken.provider';
 import { VerifyEmailProvider } from './providers/verifyEmail.provider';
 import { ResendEmailVerificationProvider } from './providers/resendVerifyEmail.provider';
+import { ChangePasswordProvider } from './providers/changeUserPassword.provider';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ResendEmailVerificationProvider } from './providers/resendVerifyEmail.p
     EmailVerificationTokenProvider,
     VerifyEmailProvider,
     ResendEmailVerificationProvider,
+    ChangePasswordProvider,
   ],
   exports: [UsersService],
 })

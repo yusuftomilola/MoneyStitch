@@ -14,8 +14,8 @@ POST http://localhost:5000/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email": "faladekunle544@email.com",
-    "password": "Adetomi.54"
+    "email": "faladeyusuf54@gmail.com",
+    "password": "Opeyemi.54"
 }
 
 // REFRESH TOKEN
@@ -47,4 +47,18 @@ POST http://localhost:5000/api/v1/auth/verify-email
 Content-Type: application/json
 {
     "token": "x41byi4uiwovx7ph801x7d"
+}
+
+// RESEND VERIFICATION EMAIL
+POST http://localhost:5000/api/v1/auth/resend-verify-email
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3ZWNkNzYyYi1hMWQ2LTQ3ZjAtYmZmOC1hOTEyNjgyYTZjYWQiLCJyb2xlIjoidXNlciIsImVtYWlsIjoiZmFsYWRleXVzdWY1NEBnbWFpbC5jb20iLCJpYXQiOjE3NjEzMjY2NjUsImV4cCI6MTc2MTQxMzA2NX0.QXrFRLk5vYUYQJ287e5KwY6Z6lpHg7DVx1XgmmG69JI
+
+// CHANGE PASSWORD
+POST http://localhost:5000/api/v1/auth/change-password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3ZWNkNzYyYi1hMWQ2LTQ3ZjAtYmZmOC1hOTEyNjgyYTZjYWQiLCJyb2xlIjoidXNlciIsImVtYWlsIjoiZmFsYWRleXVzdWY1NEBnbWFpbC5jb20iLCJpYXQiOjE3NjE0MjMyNzEsImV4cCI6MTc2MTUwOTY3MX0.jxpZ0zRgDASvTN2aj8LxAUFAritFAA-FkN4umL8jFTM
+
+{
+    "currentPassword": "Adetomi.54",
+    "newPassword": "Opeyemi.54"
 }

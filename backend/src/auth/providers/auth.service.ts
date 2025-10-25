@@ -10,6 +10,7 @@ import { RefreshTokenRepositoryOperations } from './RefreshTokenCrud.repository'
 import { LogoutResponse } from '../interfaces/logout.interface';
 import { ForgotPasswordDto } from '../dto/forgotPassword.dto';
 import {
+  ChangePasswordResponse,
   ForgotPasswordResponse,
   ResendVerifyEmailResponse,
   ResetPasswordResponse,
@@ -18,6 +19,7 @@ import {
 import { EmailService } from 'src/email/email.service';
 import { ResetPasswordDto } from '../dto/resetPassword.dto';
 import { VerifyEmailDto } from '../dto/verifyEmail.dto';
+import { ChangePasswordDto } from '../dto/changeUserPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -149,5 +151,13 @@ export class AuthService {
     user: User,
   ): Promise<ResendVerifyEmailResponse> {
     return await this.usersService.resendVerifyEmail(user);
+  }
+
+  // CHANGE PASSWORD
+  public async changePassword(
+    userId: string,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<ChangePasswordResponse> {
+    return await this.usersService.changePassword(userId, changePasswordDto);
   }
 }

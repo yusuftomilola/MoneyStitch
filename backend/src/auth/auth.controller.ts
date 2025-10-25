@@ -23,6 +23,7 @@ import { CookieHelper } from 'src/common/helpers/cookie.helper';
 import { ConfigService } from '@nestjs/config';
 import { ForgotPasswordDto } from './dto/forgotPassword.dto';
 import {
+  ChangePasswordResponse,
   ForgotPasswordResponse,
   ResendVerifyEmailResponse,
   ResetPasswordResponse,
@@ -30,6 +31,7 @@ import {
 } from './interfaces/authResponses.interface';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { VerifyEmailDto } from './dto/verifyEmail.dto';
+import { ChangePasswordDto } from './dto/changeUserPassword.dto';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -181,5 +183,15 @@ export class AuthController {
     @GetCurrentUser() user: User,
   ): Promise<ResendVerifyEmailResponse> {
     return await this.authService.ResendVerifyEmail(user);
+  }
+
+  // CHANGE PASSWORD
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  public async changePassword(
+    @GetCurrentUser() user: User,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ): Promise<ChangePasswordResponse> {
+    return await this.authService.changePassword(user.id, changePasswordDto);
   }
 }

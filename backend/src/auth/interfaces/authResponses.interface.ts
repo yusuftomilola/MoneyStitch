@@ -17,3 +17,8 @@ export interface ResendVerifyEmailResponse {
   status: string;
   message: string;
 }
+
+export interface ChangePasswordResponse {
+  status: string;
+  message: string;
+}
