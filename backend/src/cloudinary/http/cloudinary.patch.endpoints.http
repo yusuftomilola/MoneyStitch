@@ -1,0 +1,11 @@
+### Upload or update user profile picture
+PATCH http://localhost:5000/api/v1/cloudinary/profile-picture
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwYzZkZDYyNi1mOWJiLTQ3YzMtOTI3MC03YzgxODdlODJjMDciLCJyb2xlIjoidXNlciIsImVtYWlsIjoiZmFsYWRleXVzdWY1NEBnbWFpbC5jb20iLCJpYXQiOjE3NTI0ODk2NjksImV4cCI6MTc1MjQ5MzI2OSwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwIn0.mYyBJuwmY8lEJuKtZ3QMoBYXlPOTdmJzFsGhv814v2Q
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="profile.jpg"
+Content-Type: image/jpeg
+
+< ../assets/GuarantorPassport.jpeg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

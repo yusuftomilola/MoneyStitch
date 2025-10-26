@@ -74,3 +74,13 @@ export interface VerifyEmailResponse {
   status: string;
   message: string;
 }
+
+export interface ChangePasswordCredentials {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordResponse {
+  status: string;
+  message: string;
+}
