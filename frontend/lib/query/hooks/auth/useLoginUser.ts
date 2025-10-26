@@ -25,7 +25,7 @@ export function useLoginUser() {
       router.push(redirectTo || "/dashboard");
     },
     onError: (error) => {
-      toast.error("User login error");
+      toast.error(error.message || "Logging in user failed.");
       console.error("Login failed:", error);
     },
   });

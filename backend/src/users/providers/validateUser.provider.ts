@@ -33,6 +33,8 @@ export class ValidateUserProvider {
         passwordResetExpiresIn,
         passwordResetToken,
         refreshTokens,
+        emailVerificationExpiresIn,
+        emailVerificationToken,
         ...result
       } = user;
 
