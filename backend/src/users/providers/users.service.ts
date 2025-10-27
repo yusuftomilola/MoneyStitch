@@ -23,6 +23,14 @@ import { VerifyEmailProvider } from './verifyEmail.provider';
 import { ResendEmailVerificationProvider } from './resendVerifyEmail.provider';
 import { ChangePasswordDto } from 'src/auth/dto/changeUserPassword.dto';
 import { ChangePasswordProvider } from './changeUserPassword.provider';
+import { GetUserProfileProvider } from './getUserProfile.provider';
+import {
+  DeleteUserResponse,
+  UpdateUserResponse,
+} from '../interfaces/responses';
+import { UpdateUserDto } from '../dto/updateUser.dto';
+import { UpdateUserProvider } from './updateUser.provider';
+import { DeleteUserProvider } from './deleteUser.provider';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +45,9 @@ export class UsersService {
     private readonly verifyEmailProvider: VerifyEmailProvider,
     private readonly resendVerifyEmailProvider: ResendEmailVerificationProvider,
     private readonly changePasswordProvider: ChangePasswordProvider,
+    private readonly getUserProfileProvider: GetUserProfileProvider,
+    private readonly updateUserProvider: UpdateUserProvider,
+    private readonly deleteUserProvider: DeleteUserProvider,
   ) {}
 
   // FIND USER BY ID
@@ -63,11 +74,6 @@ export class UsersService {
     password: string,
   ): Promise<Partial<User>> {
     return await this.validateUserProvider.validateUser(email, password);
-  }
-
-  // GET ALL USERS
-  public async getUsers(): Promise<User[]> {
-    return await this.getusersProvider.getUsers();
   }
 
   // FORGOT PASSWORD
@@ -107,5 +113,38 @@ export class UsersService {
       userId,
       changePasswordDto,
     );
+  }
+
+  // GET USER PROFILE
+  public async userProfile(user: User): Promise<User> {
+    return await this.getUserProfileProvider.getUserProfile(user);
+  }
+
+  // UPDATE USER PROFILE
+  public async updateUserProfile(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateUserResponse> {
+    return await this.updateUserProvider.updateOneUser(userId, updateUserDto);
+  }
+
+  // DELETE A SINGLE USER
+  public async deleteSingleUser(userId: string): Promise<DeleteUserResponse> {
+    return await this.deleteUserProvider.deleteUser(userId);
+  }
+
+  // GET ALL USERS - ADMIN
+  public async getUsers(): Promise<User[]> {
+    return await this.getusersProvider.getUsers();
+  }
+
+  // GET SINGLE USER - ADMIN
+  public async getSingleUser(userId: string) {
+    return await this.findOneUserByIdProvider.getUser(userId);
+  }
+
+  // DELETE A SINGLE USER - ADMIN
+  public async deleteSingleUserAdmin(userId: string) {
+    return await this.deleteUserProvider.deleteUser(userId);
   }
 }

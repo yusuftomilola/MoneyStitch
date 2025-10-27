@@ -88,16 +88,6 @@ export class CloudinaryService {
       relations: ['profilePic'],
     });
 
-    // Check if user is updating their own profile
-    if (userId !== user.id) {
-      this.logger.warn(
-        `User ${userId} is trying to update a profile picture that does not belong to them`,
-      );
-      throw new ForbiddenException(
-        'You can only update your own profile picture',
-      );
-    }
-
     if (!user) {
       this.logger.error(`User ${userId} was not found in the database`);
       throw new NotFoundException('User not found');
@@ -121,20 +111,13 @@ export class CloudinaryService {
         await this.cloudinaryImageRepository.remove(user.profilePic);
       }
 
-      // Update user with new profile picture
-      user.profilePic = uploadResult.data;
-      const updatedUser = await this.userRepository.save(user);
+      // Set the relationship from BOTH sides
+      const newProfilePic = uploadResult.data;
+      newProfilePic.user = user; // Set from CloudinaryImage side
+      await this.cloudinaryImageRepository.save(newProfilePic); // Save the image with user reference
 
-      // Remove sensitive data from response
-      const {
-        password,
-        refreshTokens,
-        emailVerificationToken,
-        emailVerificationExpiresIn,
-        passwordResetToken,
-        passwordResetExpiresIn,
-        ...userResponse
-      } = updatedUser;
+      user.profilePic = newProfilePic; // Set from User side
+      await this.userRepository.save(user);
 
       return {
         statusCode: 200,
