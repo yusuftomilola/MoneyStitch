@@ -20,6 +20,7 @@ import { ChangePasswordProvider } from './providers/changeUserPassword.provider'
 import { GetUserProfileProvider } from './providers/getUserProfile.provider';
 import { UpdateUserProvider } from './providers/updateUser.provider';
 import { DeleteUserProvider } from './providers/deleteUser.provider';
+import { DataExportService } from './providers/data-export.service';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { DeleteUserProvider } from './providers/deleteUser.provider';
     GetUserProfileProvider,
     UpdateUserProvider,
     DeleteUserProvider,
+    DataExportService,
   ],
   exports: [UsersService],
 })

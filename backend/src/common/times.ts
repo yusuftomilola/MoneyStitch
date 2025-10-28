@@ -1,0 +1,7 @@
+const ONE_SECOND = 1000;
+const ONE_MINUTE = 60 * 1000; // 60000
+const FIVE_MINUTES = 5 * 60 * 1000; // 300000
+const TEN_MINUTES = 10 * 60 * 1000; // 600000
+const THIRTY_MINUTES = 30 * 60 * 1000; // 1800000 ✅
+const ONE_HOUR = 60 * 60 * 1000; // 3600000
+const ONE_DAY = 24 * 60 * 60 * 1000; // 86400000

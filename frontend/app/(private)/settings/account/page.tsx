@@ -17,6 +17,7 @@ import {
   useDeleteUser,
   useLogoutUser,
   useResendVerifyEmail,
+  useDataExport,
 } from "@/lib/query/hooks";
 
 const AccountSettingsPage = () => {
@@ -25,44 +26,76 @@ const AccountSettingsPage = () => {
   const { isPending, mutate: logout } = useLogoutUser();
   const deleteUser = useDeleteUser();
   const resendVerificationEmail = useResendVerifyEmail();
+  const dataExportMutation = useDataExport();
 
-  // Cooldown state
-  const [cooldownSeconds, setCooldownSeconds] = useState(0);
-  const [lastSentTime, setLastSentTime] = useState<number | null>(null);
+  // Email verification cooldown state
+  const [emailCooldownSeconds, setEmailCooldownSeconds] = useState(0);
+  const [emailLastSentTime, setEmailLastSentTime] = useState<number | null>(
+    null
+  );
 
-  // Load last sent time from localStorage
+  // Data export cooldown state
+  const [exportCooldownSeconds, setExportCooldownSeconds] = useState(0);
+  const [exportLastSentTime, setExportLastSentTime] = useState<number | null>(
+    null
+  );
+
+  // Load last sent time for email verification from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("lastVerificationEmailSent");
     if (stored) {
       const lastSent = parseInt(stored, 10);
       const elapsed = Math.floor((Date.now() - lastSent) / 1000);
       const remaining = Math.max(0, 60 - elapsed); // 60 second cooldown
-      setCooldownSeconds(remaining);
-      setLastSentTime(lastSent);
+      setEmailCooldownSeconds(remaining);
+      setEmailLastSentTime(lastSent);
     }
   }, []);
 
-  // Countdown timer
+  // Load last export time from localStorage
   useEffect(() => {
-    if (cooldownSeconds > 0) {
+    const stored = localStorage.getItem("lastDataExportTime");
+    if (stored) {
+      const lastExport = parseInt(stored, 10);
+      const elapsed = Math.floor((Date.now() - lastExport) / 1000);
+      const remaining = Math.max(0, 300 - elapsed); // 300 seconds = 5 minutes cooldown
+      setExportCooldownSeconds(remaining);
+      setExportLastSentTime(lastExport);
+    }
+  }, []);
+
+  // Countdown timer for email verification
+  useEffect(() => {
+    if (emailCooldownSeconds > 0) {
       const timer = setTimeout(
-        () => setCooldownSeconds(cooldownSeconds - 1),
+        () => setEmailCooldownSeconds(emailCooldownSeconds - 1),
         1000
       );
       return () => clearTimeout(timer);
     }
-  }, [cooldownSeconds]);
+  }, [emailCooldownSeconds]);
+
+  // Countdown timer for data export
+  useEffect(() => {
+    if (exportCooldownSeconds > 0) {
+      const timer = setTimeout(
+        () => setExportCooldownSeconds(exportCooldownSeconds - 1),
+        1000
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [exportCooldownSeconds]);
 
   const handleResendVerification = async () => {
     const now = Date.now();
     localStorage.setItem("lastVerificationEmailSent", now.toString());
-    setLastSentTime(now);
-    setCooldownSeconds(60); // 60 second cooldown
+    setEmailLastSentTime(now);
+    setEmailCooldownSeconds(60); // 60 second cooldown
     console.log("Resending verification email to:", user?.email);
     resendVerificationEmail.mutate();
   };
 
-  const canResend = cooldownSeconds === 0;
+  const canResendEmail = emailCooldownSeconds === 0;
 
   const handleDeleteAccount = async () => {
     deleteUser.mutate();
@@ -72,10 +105,26 @@ const AccountSettingsPage = () => {
     logout();
   };
 
-  const handleExportData = () => {
-    // TODO: Implement data export
-    console.log("Exporting user data...");
-    alert("Your data export will be sent to your email shortly.");
+  const handleExportData = async () => {
+    const now = Date.now();
+    localStorage.setItem("lastDataExportTime", now.toString());
+    setExportLastSentTime(now);
+    setExportCooldownSeconds(300); // 300 seconds = 5 minutes cooldown
+
+    dataExportMutation.mutate();
+  };
+
+  const canExportData = exportCooldownSeconds === 0;
+
+  // Format time remaining for display
+  const formatTimeRemaining = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    if (minutes > 0) {
+      return `${minutes}m ${remainingSeconds}s`;
+    }
+    return `${remainingSeconds}s`;
   };
 
   const formatDate = (dateString?: Date) => {
@@ -134,21 +183,25 @@ const AccountSettingsPage = () => {
               {/* Resend Verification Button */}
               <button
                 onClick={handleResendVerification}
-                disabled={resendVerificationEmail.isPending || !canResend}
+                disabled={resendVerificationEmail.isPending || !canResendEmail}
                 className="flex items-center space-x-2 text-sm  hover:text-emerald-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed  rounded-full px-3 py-1 cursor-pointer bg-yellow-100 text-yellow-700"
               >
-                <Send className="w-4 h-4" />
-                <span>
-                  {resendVerificationEmail.isPending ? (
-                    "Sending..."
-                  ) : !canResend ? (
-                    <>
-                      <span>Wait {cooldownSeconds}s</span>
-                    </>
-                  ) : (
-                    "Resend Verification Email"
-                  )}
-                </span>
+                {resendVerificationEmail.isPending ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-yellow-700 border-t-transparent rounded-full animate-spin" />
+                    <span>Sending...</span>
+                  </>
+                ) : !canResendEmail ? (
+                  <>
+                    <Clock className="w-4 h-4" />
+                    <span>Wait {emailCooldownSeconds}s</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>Resend Verification Email</span>
+                  </>
+                )}
               </button>
 
               {/* Info Message */}
@@ -205,7 +258,7 @@ const AccountSettingsPage = () => {
                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <Download className="w-5 h-5 text-blue-600" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <h4 className="font-semibold text-slate-800 mb-1">
                     Export Your Data
                   </h4>
@@ -213,13 +266,61 @@ const AccountSettingsPage = () => {
                     Download a copy of your account data, including your profile
                     information, financial records, and activity history.
                   </p>
+
+                  {/* Cooldown Info Message */}
+                  {!canExportData && !dataExportMutation.isPending && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                      <div className="flex items-start space-x-2">
+                        <Clock className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div className="text-xs text-blue-800">
+                          <p className="font-semibold">
+                            Export cooldown active
+                          </p>
+                          <p className="mt-1">
+                            You can request another export in{" "}
+                            {formatTimeRemaining(exportCooldownSeconds)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <button
                     onClick={handleExportData}
-                    className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                      canExportData && !dataExportMutation.isPending
+                        ? "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+                        : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                    }`}
+                    disabled={dataExportMutation.isPending || !canExportData}
                   >
-                    <Download className="w-4 h-4" />
-                    <span>Request Data Export</span>
+                    {dataExportMutation.isPending ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Exporting Data...</span>
+                      </>
+                    ) : !canExportData ? (
+                      <>
+                        <Clock className="w-4 h-4" />
+                        <span>
+                          Wait {formatTimeRemaining(exportCooldownSeconds)}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4" />
+                        <span>Request Data Export</span>
+                      </>
+                    )}
                   </button>
+
+                  {/* Last export info */}
+                  {exportLastSentTime && (
+                    <p className="text-xs text-slate-500 mt-2">
+                      Last export:{" "}
+                      {new Date(exportLastSentTime).toLocaleString()}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -246,11 +347,20 @@ const AccountSettingsPage = () => {
                 </p>
                 <button
                   onClick={handleLogout}
-                  className="inline-flex items-center space-x-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium cursor-pointer"
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={isPending}
                 >
-                  <LogOut className="w-4 h-4" />
-                  <span>{isPending ? "Signing out..." : "Sign Out"}</span>
+                  {isPending ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Signing out...</span>
+                    </>
+                  ) : (
+                    <>
+                      <LogOut className="w-4 h-4" />
+                      <span>Sign Out</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -342,14 +452,18 @@ const AccountSettingsPage = () => {
               <button
                 onClick={() => {
                   handleDeleteAccount();
-                  // setShowDeleteModal(false);
                 }}
-                className="w-full bg-red-600 text-white py-3 px-4 rounded-xl hover:bg-red-700 transition-colors font-semibold cursor-pointer"
+                className="w-full bg-red-600 text-white py-3 px-4 rounded-xl hover:bg-red-700 transition-colors font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={deleteUser.isPending}
               >
-                {deleteUser.isPending
-                  ? "Deleting account..."
-                  : "Yes, Delete My Account"}
+                {deleteUser.isPending ? (
+                  <span className="flex items-center justify-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Deleting account...</span>
+                  </span>
+                ) : (
+                  "Yes, Delete My Account"
+                )}
               </button>
               <button
                 onClick={() => setShowDeleteModal(false)}

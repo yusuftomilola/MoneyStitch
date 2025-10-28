@@ -25,12 +25,14 @@ import { ChangePasswordDto } from 'src/auth/dto/changeUserPassword.dto';
 import { ChangePasswordProvider } from './changeUserPassword.provider';
 import { GetUserProfileProvider } from './getUserProfile.provider';
 import {
+  DataExportResponse,
   DeleteUserResponse,
   UpdateUserResponse,
 } from '../interfaces/responses';
 import { UpdateUserDto } from '../dto/updateUser.dto';
 import { UpdateUserProvider } from './updateUser.provider';
 import { DeleteUserProvider } from './deleteUser.provider';
+import { DataExportService } from './data-export.service';
 
 @Injectable()
 export class UsersService {
@@ -48,6 +50,7 @@ export class UsersService {
     private readonly getUserProfileProvider: GetUserProfileProvider,
     private readonly updateUserProvider: UpdateUserProvider,
     private readonly deleteUserProvider: DeleteUserProvider,
+    private readonly dataExportProvider: DataExportService,
   ) {}
 
   // FIND USER BY ID
@@ -146,5 +149,10 @@ export class UsersService {
   // DELETE A SINGLE USER - ADMIN
   public async deleteSingleUserAdmin(userId: string) {
     return await this.deleteUserProvider.deleteUser(userId);
+  }
+
+  // USER DATA EXPORT
+  public async exportUserData(userId: string): Promise<DataExportResponse> {
+    return await this.dataExportProvider.exportUserData(userId);
   }
 }

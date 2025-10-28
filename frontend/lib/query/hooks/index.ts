@@ -6,6 +6,7 @@ import { useResetPassword } from "./auth/useResetPassword";
 import { useVerifyEmail } from "./auth/useVerifyEmail";
 import { useDeleteUser } from "./auth/useDeleteUser";
 import { useResendVerifyEmail } from "./auth/useResendVerifyEmail";
+import { useDataExport } from "./auth/useDataExport";
 
 export {
   useRegisterUser,
@@ -16,4 +17,5 @@ export {
   useVerifyEmail,
   useDeleteUser,
   useResendVerifyEmail,
+  useDataExport,
 };

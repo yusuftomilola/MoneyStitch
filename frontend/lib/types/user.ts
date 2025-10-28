@@ -95,3 +95,8 @@ export interface ResendVerifyEmailResponse {
   status: string;
   message: string;
 }
+
+export interface DataExportResponse {
+  status: string;
+  message: string;
+}

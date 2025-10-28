@@ -19,7 +19,13 @@ export class EmailService {
     });
   }
 
-  async sendMail(to: string, subject: string, text: string, html?: string) {
+  async sendMail(
+    to: string,
+    subject: string,
+    text: string,
+    html?: string,
+    attachments?: any[],
+  ) {
     try {
       const mailOptions = {
         from: `Moneystitch ${this.configService.get<string>('MAIL_SMTP_FROM')}`,
@@ -27,6 +33,7 @@ export class EmailService {
         subject,
         text,
         html,
+        attachments,
       };
 
       const result = await this.transporter.sendMail(mailOptions);
@@ -256,7 +263,6 @@ Need help? Contact us at support@themoneystitch.com
   // PASSWORD RESET SUCCESS CONFIRMATION EMAIL
   async sendPasswordResetSuccessConfirmationEmail(user: User) {
     const subject = '✅ Password Successfully Updated - Moneystitch';
-
     // Get user's first name or fallback to full name or email
     const userName = user.firstname || user.email.split('@')[0];
 
@@ -296,7 +302,6 @@ The Moneystitch Security Team
 ---
 This is an automated security notification. For assistance, contact support@themoneystitch.com
   `.trim();
-
     const html = `
   <!DOCTYPE html>
   <html lang="en">
@@ -389,7 +394,6 @@ This is an automated security notification. For assistance, contact support@them
   </body>
   </html>
   `;
-
     const customMailOptions = {
       from: `Moneystitch Security <${this.configService.get<string>('MAIL_SMTP_FROM_SECURITY')}>`,
       to: user.email,
@@ -399,5 +403,254 @@ This is an automated security notification. For assistance, contact support@them
     };
 
     return this.transporter.sendMail(customMailOptions);
+  }
+
+  // SEND DATA EXPORT FILE EMAIL
+  async sendDataExport(user: User, attachments: any[]) {
+    const subject = '💰 Your MoneyStitch Data Export is Ready';
+    const userName = user.firstname || user.email.split('@')[0];
+    const exportDate = new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const currentYear = new Date().getFullYear();
+
+    // Plain text version (fallback for email clients that don't support HTML)
+    const text = `
+Hi ${userName},
+
+Your MoneyStitch data export has been successfully generated and is attached to this email.
+
+Export Details:
+- Export Date: ${exportDate}
+- Format: Excel Spreadsheet
+- File Size: ${attachments[0]?.content ? (attachments[0].content.length / 1024).toFixed(2) : 'N/A'} KB
+
+The attached file contains your profile information in an easy-to-read format.
+
+Important: This file contains sensitive personal information. Please keep it secure and delete it after reviewing if you no longer need it.
+
+If you have any questions or didn't request this export, please contact our support team immediately at support@moneystitch.com.
+
+Best regards,
+The MoneyStitch Team
+
+© ${currentYear} MoneyStitch. All rights reserved.
+    `.trim();
+
+    // HTML version (beautiful formatted email)
+    const html = this.getDataExportEmailTemplate(
+      userName,
+      exportDate,
+      currentYear,
+    );
+
+    const customMailOptions = {
+      from: `MoneyStitch Accounts <${this.configService.get<string>('MAIL_SMTP_FROM_ACCOUNTS')}>`,
+      to: user.email,
+      subject,
+      text,
+      html,
+      attachments,
+    };
+
+    return this.transporter.sendMail(customMailOptions);
+  }
+
+  // Email HTML Template
+  private getDataExportEmailTemplate(
+    userName: string,
+    exportDate: string,
+    currentYear: number,
+  ): string {
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Export Ready</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+    .header {
+      background: linear-gradient(135deg, #2ECC71 0%, #27ae60 100%);
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .header h1 {
+      color: #ffffff;
+      margin: 0;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .header p {
+      color: #ffffff;
+      margin: 10px 0 0;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    .content {
+      padding: 40px 30px;
+    }
+    .greeting {
+      font-size: 16px;
+      color: #333333;
+      margin: 0 0 20px;
+    }
+    .message {
+      font-size: 14px;
+      color: #666666;
+      line-height: 1.6;
+      margin: 0 0 20px;
+    }
+    .info-box {
+      background-color: #f8f9fa;
+      border-left: 4px solid #2ECC71;
+      padding: 20px;
+      margin: 30px 0;
+      border-radius: 4px;
+    }
+    .info-box-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333333;
+      margin: 0 0 10px;
+    }
+    .info-box-content {
+      font-size: 13px;
+      color: #666666;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .warning-box {
+      background-color: #fff3cd;
+      border: 1px solid #ffc107;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .warning-box p {
+      margin: 0;
+      font-size: 13px;
+      color: #856404;
+      line-height: 1.5;
+    }
+    .footer {
+      background-color: #f8f9fa;
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #e9ecef;
+    }
+    .footer p {
+      margin: 0 0 10px;
+      color: #999999;
+      font-size: 12px;
+    }
+    .footer a {
+      color: #2ECC71;
+      text-decoration: none;
+    }
+    .attachment-icon {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      background-color: #2ECC71;
+      border-radius: 8px;
+      text-align: center;
+      line-height: 40px;
+      margin-right: 10px;
+    }
+    @media only screen and (max-width: 600px) {
+      .content {
+        padding: 30px 20px;
+      }
+      .header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 20px 0;">
+    <tr>
+      <td align="center">
+        <table class="email-container" width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td class="header">
+              <h1>💰 MoneyStitch</h1>
+              <p>Your Data Export is Ready</p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td class="content">
+              <p class="greeting">Hi ${userName},</p>
+              
+              <p class="message">
+                Your MoneyStitch data export has been successfully generated and is attached to this email.
+              </p>
+
+              <div class="info-box">
+                <p class="info-box-title">📦 Export Details</p>
+                <p class="info-box-content">
+                  <strong>Export Date:</strong> ${exportDate}<br>
+                  <strong>Format:</strong> Excel Spreadsheet (.xlsx)<br>
+                  <strong>Contents:</strong> Profile Information
+                </p>
+              </div>
+
+              <p class="message">
+                The attached file contains all your personal data in an easy-to-read Excel format. You can open it with Microsoft Excel, Google Sheets, or any compatible spreadsheet application.
+              </p>
+
+              <div class="warning-box">
+                <p>
+                  <strong>⚠️ Important:</strong> This file contains sensitive personal information. Please keep it secure and delete it after reviewing if you no longer need it.
+                </p>
+              </div>
+
+              <p class="message">
+                If you have any questions or didn't request this export, please contact our support team immediately.
+              </p>
+
+              <p class="message" style="margin-top: 30px;">
+                Best regards,<br>
+                <strong>The MoneyStitch Team</strong>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td class="footer">
+              <p>© ${currentYear} MoneyStitch. All rights reserved.</p>
+              <p>
+                Need help? Contact us at 
+                <a href="mailto:support@moneystitch.com">support@moneystitch.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `.trim();
   }
 }
