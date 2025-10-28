@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthState } from "@/lib/store/authStore";
 import {
   Calendar,
@@ -11,24 +11,65 @@ import {
   Download,
   Mail,
   Send,
+  Clock,
 } from "lucide-react";
+import {
+  useDeleteUser,
+  useLogoutUser,
+  useResendVerifyEmail,
+} from "@/lib/query/hooks";
 
 const AccountSettingsPage = () => {
   const { user } = useAuthState();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { isPending, mutate: logout } = useLogoutUser();
+  const deleteUser = useDeleteUser();
+  const resendVerificationEmail = useResendVerifyEmail();
 
-  // const { mutate: resendVerification, isPending: isSendingVerification } = useResendVerification(); // Add this
-  const handleResendVerification = () => {
-    // resendVerification({ email: user?.email || '' });
+  // Cooldown state
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [lastSentTime, setLastSentTime] = useState<number | null>(null);
+
+  // Load last sent time from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("lastVerificationEmailSent");
+    if (stored) {
+      const lastSent = parseInt(stored, 10);
+      const elapsed = Math.floor((Date.now() - lastSent) / 1000);
+      const remaining = Math.max(0, 60 - elapsed); // 60 second cooldown
+      setCooldownSeconds(remaining);
+      setLastSentTime(lastSent);
+    }
+  }, []);
+
+  // Countdown timer
+  useEffect(() => {
+    if (cooldownSeconds > 0) {
+      const timer = setTimeout(
+        () => setCooldownSeconds(cooldownSeconds - 1),
+        1000
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [cooldownSeconds]);
+
+  const handleResendVerification = async () => {
+    const now = Date.now();
+    localStorage.setItem("lastVerificationEmailSent", now.toString());
+    setLastSentTime(now);
+    setCooldownSeconds(60); // 60 second cooldown
     console.log("Resending verification email to:", user?.email);
-    alert("Verification email sent! Check your inbox.");
+    resendVerificationEmail.mutate();
+  };
+
+  const canResend = cooldownSeconds === 0;
+
+  const handleDeleteAccount = async () => {
+    deleteUser.mutate();
   };
 
   const handleLogout = () => {
-    // TODO: Call logout function
-    // logout();
-    console.log("Logging out...");
-    window.location.href = "/auth/login";
+    logout();
   };
 
   const handleExportData = () => {
@@ -88,22 +129,25 @@ const AccountSettingsPage = () => {
           </div>
 
           {/* Verification Status & Action */}
-          {user?.isEmailVerified ? (
-            <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-              <span>✓ Verified</span>
-            </div>
-          ) : (
+          {!user?.isEmailVerified && (
             <div className="space-y-2 p-4 ">
               {/* Resend Verification Button */}
               <button
                 onClick={handleResendVerification}
-                // disabled={isSendingVerification}
+                disabled={resendVerificationEmail.isPending || !canResend}
                 className="flex items-center space-x-2 text-sm  hover:text-emerald-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed  rounded-full px-3 py-1 cursor-pointer bg-yellow-100 text-yellow-700"
               >
                 <Send className="w-4 h-4" />
                 <span>
-                  {/* {isSendingVerification ? 'Sending...' : 'Resend Verification Email'} */}
-                  Resend Verification Email
+                  {resendVerificationEmail.isPending ? (
+                    "Sending..."
+                  ) : !canResend ? (
+                    <>
+                      <span>Wait {cooldownSeconds}s</span>
+                    </>
+                  ) : (
+                    "Resend Verification Email"
+                  )}
                 </span>
               </button>
 
@@ -202,10 +246,11 @@ const AccountSettingsPage = () => {
                 </p>
                 <button
                   onClick={handleLogout}
-                  className="inline-flex items-center space-x-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium"
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium cursor-pointer"
+                  disabled={isPending}
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>Sign Out</span>
+                  <span>{isPending ? "Signing out..." : "Sign Out"}</span>
                 </button>
               </div>
             </div>
@@ -253,7 +298,7 @@ const AccountSettingsPage = () => {
                 </div>
                 <button
                   onClick={() => setShowDeleteModal(true)}
-                  className="inline-flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
                   <span>Delete My Account</span>
@@ -296,17 +341,19 @@ const AccountSettingsPage = () => {
             <div className="space-y-3">
               <button
                 onClick={() => {
-                  // TODO: Call delete account API
-                  console.log("Deleting account...");
-                  setShowDeleteModal(false);
+                  handleDeleteAccount();
+                  // setShowDeleteModal(false);
                 }}
-                className="w-full bg-red-600 text-white py-3 px-4 rounded-xl hover:bg-red-700 transition-colors font-semibold"
+                className="w-full bg-red-600 text-white py-3 px-4 rounded-xl hover:bg-red-700 transition-colors font-semibold cursor-pointer"
+                disabled={deleteUser.isPending}
               >
-                Yes, Delete My Account
+                {deleteUser.isPending
+                  ? "Deleting account..."
+                  : "Yes, Delete My Account"}
               </button>
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="w-full bg-slate-100 text-slate-700 py-3 px-4 rounded-xl hover:bg-slate-200 transition-colors font-semibold"
+                className="w-full bg-slate-100 text-slate-700 py-3 px-4 rounded-xl hover:bg-slate-200 transition-colors font-semibold cursor-pointer"
               >
                 Cancel
               </button>

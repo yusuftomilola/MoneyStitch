@@ -6,4 +6,6 @@ export const mutationKeys = {
   resetPassword: ["resetPassword"] as const,
   verifyEmail: ["verifyEmail"] as const,
   changePassword: ["changePassword"] as const,
+  deleteUser: ["deleteUser"] as const,
+  resendVerifyEmail: ["resendVerifyEmail"] as const,
 };

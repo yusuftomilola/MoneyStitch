@@ -56,6 +56,12 @@ export class CreateUserProvider {
 
       user = await this.userRepository.save(user);
 
+      // clear any existing cookie first to make room for new cookie
+      const clearOptions = CookieHelper.getClearCookieOptions(
+        this.configService,
+      );
+      response.clearCookie('authRefreshToken', clearOptions);
+
       // generate tokens
       const { accessToken, refreshToken } =
         await this.generateTokensProvider.generateBothTokens(user);

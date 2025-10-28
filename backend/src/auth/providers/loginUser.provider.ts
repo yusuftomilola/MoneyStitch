@@ -21,20 +21,35 @@ export class LoginUserProvider {
     user: User,
     response: Response,
   ): Promise<AuthResponse> {
+    // Clear any existing cookie first
+    const clearOptions = CookieHelper.getClearCookieOptions(this.configService);
+    response.clearCookie('authRefreshToken', clearOptions);
+
     const { accessToken, refreshToken } =
       await this.generateTokensProvider.generateBothTokens(user);
 
-    await this.refreshTokenRepositoryOperations.saveRefreshToken(
-      user,
-      refreshToken,
+    console.log('=== SAVING NEW REFRESH TOKEN ===');
+    console.log('User ID:', user.id);
+    console.log(
+      'New refresh token (first 20 chars):',
+      refreshToken.substring(0, 20),
     );
+
+    const savedToken =
+      await this.refreshTokenRepositoryOperations.saveRefreshToken(
+        user,
+        refreshToken,
+      );
+
+    console.log('Saved token ID:', savedToken.id);
+    console.log('Saved token revoked?:', savedToken.revoked);
+    console.log('Saved token created at:', savedToken.createdAt);
 
     const jwtExpirationMs = parseInt(
       this.configService.get<string>('JWT_REFRESH_EXPIRATION') || '604800000',
-    ); // 7 DAYS in milliseconds
+    );
     const expires = new Date(Date.now() + jwtExpirationMs);
 
-    // use environment-aware cookie settings
     const cookieOptions = CookieHelper.getRefreshTokenCookieOptions(
       this.configService,
       expires,

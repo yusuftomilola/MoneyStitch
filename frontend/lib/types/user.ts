@@ -85,3 +85,13 @@ export interface ChangePasswordResponse {
   status: string;
   message: string;
 }
+
+export interface DeleteUserResponse {
+  status: string;
+  message: string;
+}
+
+export interface ResendVerifyEmailResponse {
+  status: string;
+  message: string;
+}

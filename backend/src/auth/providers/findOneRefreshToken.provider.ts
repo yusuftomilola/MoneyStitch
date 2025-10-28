@@ -16,7 +16,11 @@ export class FindOneRefreshTokenProvider {
     private readonly hashingProvider: HashingProvider,
   ) {}
 
-  public async findRefreshToken(userId: string, userRefreshToken: string) {
+  public async findRefreshToken(
+    userId: string,
+    userRefreshToken: string,
+    allowRevoked: boolean = false, // New parameter
+  ) {
     let userTokens: RefreshToken[];
 
     try {
@@ -27,6 +31,9 @@ export class FindOneRefreshTokenProvider {
           },
         },
         relations: ['user'],
+        order: {
+          createdAt: 'DESC', // Get newest tokens first
+        },
       });
     } catch (error) {
       throw new RequestTimeoutException('Error connecting to the database');
@@ -37,6 +44,8 @@ export class FindOneRefreshTokenProvider {
     }
 
     // compare provided token with each stored one
+    let matchedToken: RefreshToken | null = null;
+
     for (const tokenEntity of userTokens) {
       const isMatch = await this.hashingProvider.compare(
         userRefreshToken,
@@ -44,14 +53,32 @@ export class FindOneRefreshTokenProvider {
       );
 
       if (isMatch) {
-        //checkif the token is already revoked
-        if (tokenEntity.revoked) {
-          throw new UnauthorizedException('Refresh token is already revoked');
+        matchedToken = tokenEntity;
+
+        // If we found a non-revoked match, use it immediately
+        if (!tokenEntity.revoked) {
+          console.log('Found valid non-revoked token:', tokenEntity.id);
+          return tokenEntity;
         }
 
-        console.log(tokenEntity);
-        return tokenEntity;
+        // If revoked but we allow it, continue to find potential newer match
+        if (allowRevoked) {
+          console.log(
+            'Found revoked token, but continuing search:',
+            tokenEntity.id,
+          );
+          continue;
+        }
+
+        // Found revoked token and not allowed
+        console.log('Found revoked token:', tokenEntity.id);
+        throw new UnauthorizedException('Refresh token is already revoked');
       }
+    }
+
+    // If we get here with a matched token (only possible if allowRevoked=true)
+    if (matchedToken) {
+      return matchedToken;
     }
 
     throw new UnauthorizedException('Invalid refresh token');

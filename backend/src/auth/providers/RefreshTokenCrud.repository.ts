@@ -107,21 +107,41 @@ export class RefreshTokenRepositoryOperations {
     let refreshTokenEntity: RefreshToken;
 
     try {
+      // Try to find the token (allowing revoked ones)
       refreshTokenEntity =
         await this.findOneRefreshTokenProvider.findRefreshToken(
           userId,
           userToken,
+          true, // Allow revoked tokens
         );
 
       console.log('Found matching token:', refreshTokenEntity.id);
+      console.log('Token created at:', refreshTokenEntity.createdAt);
       console.log('Token already revoked?', refreshTokenEntity.revoked);
+
+      // If already revoked, just return success (idempotent)
+      if (refreshTokenEntity.revoked) {
+        console.log('Token already revoked, returning success');
+        return {
+          status: true,
+          message: 'User was already logged out',
+        };
+      }
     } catch (error) {
       console.error('Error finding refresh token:', error.message);
+
+      // If token not found or invalid, still return success for logout
+      if (error.message.includes('Invalid refresh token')) {
+        return {
+          status: true,
+          message: 'Logged out successfully (token not found)',
+        };
+      }
+
       throw error;
     }
 
     const now = new Date();
-
     refreshTokenEntity.revoked = true;
     refreshTokenEntity.revokedAt = now;
 
@@ -137,7 +157,7 @@ export class RefreshTokenRepositoryOperations {
 
     return {
       status: true,
-      message: 'Refresh token revoked successfully',
+      message: 'User was logged out successfully',
     };
   }
 
