@@ -46,14 +46,14 @@ export class UsersController {
 
   // GET ALL USERS - ADMIN ONLY
   @Get()
-  // @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   public async getUsers(): Promise<User[]> {
     return await this.usersService.getUsers();
   }
 
   // GET SINGLE USER - ADMIN ONLY
   @Get(':id')
-  // @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   public async getSingleUser(@Param('id') userId: string): Promise<User> {
     console.log(userId);
     return await this.usersService.getSingleUser(userId);
@@ -61,7 +61,7 @@ export class UsersController {
 
   // DELETE SINGLE USER - ADMIN ONLY
   @Delete(':id')
-  // @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   public async deleteSingleUser(@Param('id') userId: string) {
     return await this.usersService.deleteSingleUserAdmin(userId);
   }

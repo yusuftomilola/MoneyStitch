@@ -8,6 +8,7 @@ export interface User {
   firstname: string;
   lastname: string;
   username?: string | null;
+  isEmailVerified: boolean;
   email: string;
   role: "user" | "admin";
   isActive: boolean;
