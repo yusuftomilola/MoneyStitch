@@ -24,7 +24,6 @@ export class FindOneUserByIdProvider {
         where: {
           id: userId,
         },
-        relations: ['profilePic'],
       });
 
       if (!user) {
@@ -35,6 +34,10 @@ export class FindOneUserByIdProvider {
       this.logger.log(`User ${userId} was retrieved succesfully`);
       return user;
     } catch (error) {
+      // Don't catch NotFoundException here, let it bubble up
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       this.logger.error(`Failed to get user ${userId} `);
       ErrorCatch(error, 'Error retrieving user details');
     }

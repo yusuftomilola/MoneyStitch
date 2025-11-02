@@ -45,18 +45,10 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 pt-16 pb-25">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Link
-            href="/"
-            className="inline-flex items-center space-x-2 text-slate-600 hover:text-emerald-600 transition-colors mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Dashboard</span>
-          </Link>
-
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-slate-800">
@@ -84,7 +76,7 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Sidebar Navigation - Desktop */}
           <aside className="hidden lg:block lg:col-span-3">
-            <nav className="bg-white rounded-2xl border border-slate-200 p-4 sticky top-8">
+            <nav className="bg-white rounded-2xl border border-slate-200 p-4 sticky top-24">
               <div className="space-y-2">
                 {settingsNavigation.map((item) => {
                   const Icon = item.icon;

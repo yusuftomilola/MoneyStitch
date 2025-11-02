@@ -101,6 +101,7 @@ export class CloudinaryService {
         return {
           statusCode: uploadResult.statusCode,
           message: uploadResult.message || 'Failed to upload image',
+          user,
         };
       }
 
@@ -122,11 +123,13 @@ export class CloudinaryService {
       return {
         statusCode: 200,
         message: 'Profile picture updated successfully',
+        user,
       };
     } catch (error) {
       return {
         statusCode: 500,
         message: 'Error updating profile picture',
+        user,
       };
     }
   }

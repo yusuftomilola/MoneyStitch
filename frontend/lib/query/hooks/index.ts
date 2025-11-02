@@ -7,6 +7,8 @@ import { useVerifyEmail } from "./auth/useVerifyEmail";
 import { useDeleteUser } from "./auth/useDeleteUser";
 import { useResendVerifyEmail } from "./auth/useResendVerifyEmail";
 import { useDataExport } from "./auth/useDataExport";
+import { useUpdateProfile } from "./auth/useUpdateProfile";
+import { useUpdateProfilePic } from "./auth/useUpdateProfilePic";
 
 export {
   useRegisterUser,
@@ -18,4 +20,6 @@ export {
   useDeleteUser,
   useResendVerifyEmail,
   useDataExport,
+  useUpdateProfile,
+  useUpdateProfilePic,
 };

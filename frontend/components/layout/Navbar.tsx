@@ -1,6 +1,7 @@
 "use client";
 import { DollarSign, X, Menu, Mail, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image"; // Add this import
 import { useEffect, useState } from "react";
 import { useAuthState } from "@/lib/store/authStore";
 import { useLogoutUser } from "@/lib/query/hooks";
@@ -74,56 +75,82 @@ export default function Navbar() {
       <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
+            <Link href={"/"} className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
                 <DollarSign className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-slate-800">
                 MoneyStitch
               </span>
-            </div>
+            </Link>
 
             <div className="hidden md:flex items-center space-x-8">
-              <a
+              <Link
                 href="#home"
                 className="text-slate-600 hover:text-emerald-600 transition-colors"
               >
                 Home
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#tools"
                 className="text-slate-600 hover:text-emerald-600 transition-colors"
               >
                 Tools
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#blog"
                 className="text-slate-600 hover:text-emerald-600 transition-colors"
               >
                 Blog
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#premium"
                 className="text-slate-600 hover:text-emerald-600 transition-colors"
               >
                 Premium
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#contact"
                 className="text-slate-600 hover:text-emerald-600 transition-colors"
               >
                 Contact
-              </a>
+              </Link>
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
               {isAuthenticated ? (
                 <>
+                  {/* Profile Picture */}
                   <Link href="/settings/profile">
-                    <button className="text-slate-600 hover:text-emerald-600 px-4 py-2 rounded-lg transition-colors cursor-pointer">
-                      Settings
-                    </button>
+                    <div className="flex items-center space-x-3 cursor-pointer group">
+                      <div className="relative">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-sm font-bold overflow-hidden border-2 border-white shadow-md group-hover:shadow-lg transition-shadow">
+                          {user?.profilePic?.path ? (
+                            <Image
+                              src={user.profilePic.path}
+                              alt={`${user.firstname} ${user.lastname}`}
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span>
+                              {user?.firstname?.[0]}
+                              {user?.lastname?.[0]}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-slate-800">
+                          {user?.firstname}
+                        </p>
+                        <p className="text-xs text-slate-500">View Profile</p>
+                      </div>
+                    </div>
                   </Link>
+
                   <button
                     className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleLogout}
@@ -150,7 +177,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6" />
@@ -164,44 +191,67 @@ export default function Navbar() {
         {isMenuOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-gray-100 shadow-lg">
             <div className="px-4 py-4 space-y-3">
-              <a
+              <Link
                 href="#home"
                 className="block text-slate-600 hover:text-emerald-600 py-2"
               >
                 Home
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#tools"
                 className="block text-slate-600 hover:text-emerald-600 py-2"
               >
                 Tools
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#blog"
                 className="block text-slate-600 hover:text-emerald-600 py-2"
               >
                 Blog
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#premium"
                 className="block text-slate-600 hover:text-emerald-600 py-2"
               >
                 Premium
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#contact"
                 className="block text-slate-600 hover:text-emerald-600 py-2"
               >
                 Contact
-              </a>
+              </Link>
               <div className="flex flex-col space-y-3 pt-3 border-t border-gray-100">
                 {isAuthenticated ? (
                   <>
+                    {/* Mobile Profile Section */}
                     <Link href="/settings/profile">
-                      <button className="w-full text-left text-slate-600 hover:text-emerald-600 px-4 py-2 rounded-lg cursor-pointer">
-                        Settings
-                      </button>
+                      <div className="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-sm font-bold overflow-hidden border-2 border-white shadow-md">
+                          {user?.profilePic?.path ? (
+                            <Image
+                              src={user.profilePic.path}
+                              alt={`${user.firstname} ${user.lastname}`}
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span>
+                              {user?.firstname?.[0]}
+                              {user?.lastname?.[0]}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-slate-800">
+                            {user?.firstname} {user?.lastname}
+                          </p>
+                          <p className="text-xs text-slate-500">View Profile</p>
+                        </div>
+                      </div>
                     </Link>
+
                     <button
                       className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={handleLogout}

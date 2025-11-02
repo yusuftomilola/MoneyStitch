@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { FileTypes } from './enums/fileTypes.enum';
 import { User } from 'src/users/entities/user.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class CloudinaryImage {
@@ -54,6 +55,7 @@ export class CloudinaryImage {
     nullable: true,
     onDelete: 'CASCADE',
   })
+  @Exclude()
   @JoinColumn()
   user: User;
 

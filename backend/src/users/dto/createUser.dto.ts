@@ -27,6 +27,16 @@ export class CreateUserDto {
   @MaxLength(20)
   username?: string;
 
+  @IsString()
+  @MaxLength(500)
+  @IsOptional()
+  bio?: string;
+
+  @IsString()
+  @MaxLength(11)
+  @IsOptional()
+  phone?: string;
+
   @IsNotEmpty()
   @IsEmail()
   @MaxLength(50)

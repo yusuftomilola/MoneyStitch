@@ -9,4 +9,6 @@ export const mutationKeys = {
   deleteUser: ["deleteUser"] as const,
   resendVerifyEmail: ["resendVerifyEmail"] as const,
   dataExport: ["dataExport"] as const,
+  updateProfile: ["updateProfile"] as const,
+  updateProfilePic: ["updateProfilePic"] as const,
 };

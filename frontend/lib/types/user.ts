@@ -3,11 +3,25 @@ export enum UserRole {
   ADMIN = "admin",
 }
 
+export interface ProfilePic {
+  id?: number;
+  name?: string;
+  path?: string;
+  type?: string;
+  mime?: string;
+  size?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface User {
   id: string;
   firstname: string;
   lastname: string;
   username?: string | null;
+  phone?: string | null;
+  bio?: string | null;
+  profilePic?: ProfilePic;
   isEmailVerified: boolean;
   email: string;
   role: "user" | "admin";
@@ -99,4 +113,24 @@ export interface ResendVerifyEmailResponse {
 export interface DataExportResponse {
   status: string;
   message: string;
+}
+
+export interface UpdateUserProfileCredentials {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  bio?: string;
+  username?: string;
+}
+
+export interface UpdateUserProfileResponse {
+  status: string;
+  message: string;
+  user: User;
+}
+
+export interface UpdateUserProfilePictureResponse {
+  statusCode: number;
+  message: string;
+  user: User;
 }

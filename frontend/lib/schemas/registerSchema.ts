@@ -4,7 +4,7 @@ export const registerSchema = z.object({
   firstname: z
     .string("Input must be a string")
     .min(1, "Firstname is required")
-    .max(30, "Too long")
+    .max(30, "Firstname is too long")
     .transform((value) => value.trim().replace(/\s+/g, " "))
     .transform(
       (val) => val.charAt(0).toUpperCase() + val.slice(1).toLowerCase()
@@ -13,7 +13,7 @@ export const registerSchema = z.object({
   lastname: z
     .string("Input must be a string")
     .min(1, "Lastname is required")
-    .max(30, "Too long")
+    .max(30, "Lastname is too long")
     .transform((value) => value.trim().replace(/\s+/g, " "))
     .transform(
       (val) => val.charAt(0).toUpperCase() + val.slice(1).toLowerCase()
@@ -22,7 +22,7 @@ export const registerSchema = z.object({
   email: z
     .email("Please enter a valid email address")
     .min(1, "Email is required")
-    .max(50, "Too long")
+    .max(50, "Email is too long")
     .toLowerCase(),
 
   password: z

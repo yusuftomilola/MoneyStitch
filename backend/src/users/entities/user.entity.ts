@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -34,6 +35,16 @@ export class User {
   username?: string;
 
   @Column({
+    nullable: true,
+  })
+  bio?: string;
+
+  @Column({
+    nullable: true,
+  })
+  phone?: string;
+
+  @Column({
     nullable: false,
     unique: true,
   })
@@ -52,7 +63,9 @@ export class User {
   })
   role: UserRole;
 
-  @OneToOne(() => CloudinaryImage, (profilePic) => profilePic.user)
+  @OneToOne(() => CloudinaryImage, (profilePic) => profilePic.user, {
+    eager: true,
+  })
   profilePic?: CloudinaryImage;
 
   @Column({

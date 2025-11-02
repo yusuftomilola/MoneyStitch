@@ -46,17 +46,17 @@ export class ChangePasswordProvider {
       );
     }
 
-    let user = await this.usersRepository.findOne({
-      where: {
-        id: userId,
-      },
-      // select: ['id', 'email', 'password'], this only selectd these 3 fields explicitly.
-    });
+    // **FIX: Explicitly select the password field**
+    let user = await this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: userId })
+      .addSelect('user.password') // This ensures password is loaded even if select: false
+      .getOne();
 
     if (!user) {
       this.logger.error(`User ${userId} not found during password change`);
       throw new InternalServerErrorException(
-        'Unable to process request. Please log in again.', // Because they are already logged in. They are authenticated.
+        'Unable to process request. Please log in again.',
       );
     }
 
@@ -72,9 +72,7 @@ export class ChangePasswordProvider {
     }
 
     // if the passwords match, go ahead to hash the new password and save it
-    const hashedPassword = await this.hashingProvider.hash(
-      changePasswordDto.newPassword,
-    );
+    const hashedPassword = await this.hashingProvider.hash(newPassword);
 
     // use transaction to ensure atomicity
     const queryRunner = this.datasource.createQueryRunner();

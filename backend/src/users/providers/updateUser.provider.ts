@@ -21,9 +21,7 @@ export class UpdateUserProvider {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-
     private readonly hashingProvider: HashingProvider,
-
     private readonly findOneUserByIdProvider: FindOneUserByIdProvider,
   ) {}
 
@@ -33,12 +31,12 @@ export class UpdateUserProvider {
   ): Promise<UpdateUserResponse> {
     try {
       // check if user exists
-      const user = await this.usersRepository.findOne({
+      const existingUser = await this.usersRepository.findOne({
         where: { id },
         relations: ['profilePic'],
       });
 
-      if (!user) {
+      if (!existingUser) {
         throw new NotFoundException('User not found');
       }
 
@@ -49,23 +47,36 @@ export class UpdateUserProvider {
             updateUserDto.password,
           );
         } catch (error) {
-          this.logger.error(`Could not hash password for user ${user.id}`);
+          this.logger.error(`Could not hash password for user ${id}`);
           throw new Error(error);
         }
       }
 
-      // update the user object with the updated details
-      Object.assign(user, updateUserDto);
+      // Use preload to properly merge the updates with the existing entity
+      const userToUpdate = await this.usersRepository.preload({
+        id: id,
+        ...updateUserDto,
+      });
 
-      // save the updated details to the database
+      if (!userToUpdate) {
+        throw new NotFoundException('User not found');
+      }
 
-      await this.usersRepository.save(user);
+      // save the updated user
+      const updatedUser = await this.usersRepository.save(userToUpdate);
 
-      this.logger.log(`User ${user.id} was successfully updated`);
+      // Explicitly fetch the updated user with relations to ensure we get the correct data
+      const finalUser = await this.usersRepository.findOne({
+        where: { id: updatedUser.id },
+        relations: ['profilePic'],
+      });
+
+      this.logger.log(`User ${id} was successfully updated`);
 
       return {
         status: 'Success',
-        message: 'User updated sucessfully',
+        message: 'User updated successfully',
+        user: finalUser,
       };
     } catch (error) {
       this.logger.error('Failed to update user', error);

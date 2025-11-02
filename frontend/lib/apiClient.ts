@@ -104,8 +104,14 @@ class ApiClient {
     retryCount = 0
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
+
+    // Check if body is FormData to handle multipart/form-data
+    const isFormData = options.body instanceof FormData;
+
     const headers: Record<string, string> = {
-      "Content-Type": "application/json",
+      // Only set Content-Type for non-FormData requests
+      // FormData will automatically set the correct Content-Type with boundary
+      ...((!isFormData && { "Content-Type": "application/json" }) || {}),
       ...(options.headers as Record<string, string>),
     };
 
@@ -193,6 +199,33 @@ class ApiClient {
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: "DELETE",
+    });
+  }
+
+  // NEW: Method for uploading files with FormData (POST)
+  async postFormData<T>(endpoint: string, formData: FormData): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: "POST",
+      body: formData,
+      // Don't set Content-Type header - browser will set it automatically with boundary
+    });
+  }
+
+  // NEW: Method for uploading files with FormData (PATCH)
+  async patchFormData<T>(endpoint: string, formData: FormData): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: "PATCH",
+      body: formData,
+      // Don't set Content-Type header - browser will set it automatically with boundary
+    });
+  }
+
+  // NEW: Method for uploading files with FormData (PUT)
+  async putFormData<T>(endpoint: string, formData: FormData): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: "PUT",
+      body: formData,
+      // Don't set Content-Type header - browser will set it automatically with boundary
     });
   }
 

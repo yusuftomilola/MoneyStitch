@@ -10,12 +10,14 @@ import { JwtAuthGuard } from './auth/guards/jwt.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { EmailModule } from './email/email.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
+import environmentValidation from './environment.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validationSchema: environmentValidation,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

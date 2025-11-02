@@ -1,6 +1,9 @@
+import { User } from '../entities/user.entity';
+
 export interface UpdateUserResponse {
   status: string;
   message: string;
+  user: Partial<User>;
 }
 
 export interface DeleteUserResponse {

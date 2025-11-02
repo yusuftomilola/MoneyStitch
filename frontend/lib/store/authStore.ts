@@ -19,7 +19,7 @@ interface AuthActions {
   refreshAccessToken: () => Promise<void>;
 
   //User actions
-  updateProfile: (userData: Partial<User>) => Promise<void>;
+  updateProfile: (userData: User) => Promise<void>;
   updateEmailVerificationStatus: (isVerified: boolean) => void;
 
   // State management actions
@@ -73,6 +73,7 @@ export const useAuthStore = create<AuthStore>()(
             );
 
             const { user, accessToken } = response;
+            console.log(user);
             const expiresAt = getTokenExpirationTime();
 
             // set the token in the api request headers authorization so that it always sends it to the backend when sending a request.
@@ -236,14 +237,9 @@ export const useAuthStore = create<AuthStore>()(
         },
 
         // USER ACTIONS
-        updateProfile: async (userData: Partial<User>) => {
+        updateProfile: async (user: User) => {
           try {
             set({ isLoading: true });
-
-            const user = await apiClient.patch<User>(
-              "/users/profile",
-              userData
-            );
 
             set({
               user,
@@ -255,6 +251,10 @@ export const useAuthStore = create<AuthStore>()(
             set({ isLoading: false });
             throw error;
           }
+        },
+
+        updateProfilePic: (imageUrl: string) => {
+          storage.setPofilePic(imageUrl);
         },
 
         // NEW: Update email verification status

@@ -23,7 +23,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
     });
   }
 
-  async validate(tokenPayload: any) {
+  async validate(tokenPayload: TokenPayload) {
     const user = await this.usersService.findUserById(tokenPayload.sub);
 
     return user;

@@ -1,3 +1,4 @@
+"use client";
 import { apiClient } from "@/lib/apiClient";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

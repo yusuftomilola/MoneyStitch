@@ -63,7 +63,9 @@ export class DataExportService {
         { field: 'First Name', value: user.firstname },
         { field: 'Last Name', value: user.lastname },
         { field: 'Username', value: user.username },
+        { field: 'Bio', value: user.bio },
         { field: 'Email', value: user.email },
+        { field: 'Phone', value: user.phone },
         { field: 'Email Verified', value: user.isEmailVerified ? 'Yes' : 'No' },
         { field: 'Account Created', value: user.createdAt.toISOString() },
         {
