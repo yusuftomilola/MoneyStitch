@@ -46,6 +46,15 @@ const getTokenExpirationTime = (): number => {
   return Date.now() + 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 };
 
+function getTokenExpirationFromJWT(token: string): number | null {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp * 1000; // Convert to milliseconds
+  } catch {
+    return null;
+  }
+}
+
 // Refresh token 5 minutes before it expires
 const REFRESH_BEFORE_EXPIRY = 5 * 60 * 1000; // 5 minutes in milliseconds
 
@@ -74,7 +83,9 @@ export const useAuthStore = create<AuthStore>()(
 
             const { user, accessToken } = response;
             console.log(user);
-            const expiresAt = getTokenExpirationTime();
+            const expiresAt =
+              getTokenExpirationFromJWT(accessToken) ||
+              getTokenExpirationTime();
 
             // set the token in the api request headers authorization so that it always sends it to the backend when sending a request.
             apiClient.setToken(accessToken);
@@ -113,7 +124,9 @@ export const useAuthStore = create<AuthStore>()(
               data
             );
 
-            const expiresAt = getTokenExpirationTime();
+            const expiresAt =
+              getTokenExpirationFromJWT(accessToken) ||
+              getTokenExpirationTime();
 
             apiClient.setToken(accessToken);
 
@@ -251,10 +264,6 @@ export const useAuthStore = create<AuthStore>()(
             set({ isLoading: false });
             throw error;
           }
-        },
-
-        updateProfilePic: (imageUrl: string) => {
-          storage.setPofilePic(imageUrl);
         },
 
         // NEW: Update email verification status

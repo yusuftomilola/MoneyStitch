@@ -28,13 +28,16 @@ export function useVerifyEmail() {
     mutationFn: verifyEmailFn,
     onSuccess: (response) => {
       updateEmailVerificationStatus(true);
-      toast.success(response.message);
+      toast.success(response.message || "Email verified successfully");
       setTimeout(() => {
         router.push("/");
       }, 3000);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message || "Failed to verfiy email");
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
     },
   });
 }

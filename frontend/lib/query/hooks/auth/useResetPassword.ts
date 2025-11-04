@@ -16,8 +16,6 @@ export function useResetPassword() {
       resetPasswordCredentials
     );
 
-    console.log("API Backend Response: ", response);
-
     return response;
   };
 
@@ -25,7 +23,10 @@ export function useResetPassword() {
     mutationKey: mutationKeys.resetPassword,
     mutationFn: resetPasswordFn,
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message || "Error resetting your password");
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
     },
   });
 }

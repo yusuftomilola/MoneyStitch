@@ -19,14 +19,15 @@ export function useRegisterUser() {
   return useMutation({
     mutationKey: mutationKeys.registerUser,
     mutationFn: registerUserFn,
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
       toast.success("User created successfully");
       router.push("/");
     },
     onError: (error) => {
       toast.error("Error creating user");
-      console.error("Register failed:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
     },
   });
 }

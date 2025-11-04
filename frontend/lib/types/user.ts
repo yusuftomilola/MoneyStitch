@@ -116,8 +116,8 @@ export interface DataExportResponse {
 }
 
 export interface UpdateUserProfileCredentials {
-  firstName?: string;
-  lastName?: string;
+  firstname?: string;
+  lastname?: string;
   phone?: string;
   bio?: string;
   username?: string;

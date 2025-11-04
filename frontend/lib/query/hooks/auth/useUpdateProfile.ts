@@ -35,6 +35,9 @@ export function useUpdateProfile() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to update user profile");
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
     },
   });
 }

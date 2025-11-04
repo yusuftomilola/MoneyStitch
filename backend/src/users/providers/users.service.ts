@@ -33,6 +33,8 @@ import { UpdateUserDto } from '../dto/updateUser.dto';
 import { UpdateUserProvider } from './updateUser.provider';
 import { DeleteUserProvider } from './deleteUser.provider';
 import { DataExportService } from './data-export.service';
+import { PaginatedResponse } from 'src/common/pagination/interfaces/paginated-response.interface';
+import { QueryUsersDto } from '../dto/user-filter.dto';
 
 @Injectable()
 export class UsersService {
@@ -137,8 +139,10 @@ export class UsersService {
   }
 
   // GET ALL USERS - ADMIN
-  public async getUsers(): Promise<User[]> {
-    return await this.getusersProvider.getUsers();
+  public async getUsers(
+    queryDto: QueryUsersDto,
+  ): Promise<PaginatedResponse<User>> {
+    return await this.getusersProvider.getUsers(queryDto);
   }
 
   // GET SINGLE USER - ADMIN

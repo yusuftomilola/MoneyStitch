@@ -6,16 +6,10 @@ import { toast } from "sonner";
 
 export function useResendVerifyEmail() {
   const resendVerifyEmailFn = async () => {
-    try {
-      const data = await apiClient.post<ResendVerifyEmailResponse>(
-        "/auth/resend-verify-email"
-      );
-      return data;
-    } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.log(error);
-      }
-    }
+    const data = await apiClient.post<ResendVerifyEmailResponse>(
+      "/auth/resend-verify-email"
+    );
+    return data;
   };
 
   return useMutation({
@@ -31,6 +25,9 @@ export function useResendVerifyEmail() {
         error.message ||
           "Failed to re-send verification email. Kindly try again later."
       );
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
     },
   });
 }

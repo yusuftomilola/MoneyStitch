@@ -9,3 +9,16 @@ Content-Type: image/jpeg
 
 < ../assets/GuarantorPassport.jpeg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+
+### Upload or update user profile picture - ADMIN
+PATCH http://localhost:5000/api/v1/cloudinary/9ef2e01f-3ad7-428d-b0d9-7867d29f5401/profile-picture
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwYzZkZDYyNi1mOWJiLTQ3YzMtOTI3MC03YzgxODdlODJjMDciLCJyb2xlIjoidXNlciIsImVtYWlsIjoiZmFsYWRleXVzdWY1NEBnbWFpbC5jb20iLCJpYXQiOjE3NTI0ODk2NjksImV4cCI6MTc1MjQ5MzI2OSwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwIn0.mYyBJuwmY8lEJuKtZ3QMoBYXlPOTdmJzFsGhv814v2Q
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="profile.jpg"
+Content-Type: image/jpeg
+
+< ../assets/GuarantorPassport.jpeg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

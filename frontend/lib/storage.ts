@@ -68,9 +68,4 @@ export const storage = {
     localStorage.removeItem(AUTH_TOKEN_EXPIRY_KEY);
     document.cookie = `authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT`;
   },
-
-  setPofilePic(imageUrl: string): void {
-    if (typeof window === "undefined") return;
-    localStorage.setItem("userProfilePic", imageUrl);
-  },
 };

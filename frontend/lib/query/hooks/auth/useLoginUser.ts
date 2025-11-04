@@ -26,7 +26,9 @@ export function useLoginUser() {
     },
     onError: (error) => {
       toast.error(error.message || "Logging in user failed.");
-      console.error("Login failed:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
     },
   });
 }

@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './providers/users.service';
@@ -18,6 +19,8 @@ import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { DataExportResponse, UpdateUserResponse } from './interfaces/responses';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { QueryUsersDto } from './dto/user-filter.dto';
+import { PaginatedResponse } from 'src/common/pagination/interfaces/paginated-response.interface';
 
 @Controller('api/v1/users')
 export class UsersController {
@@ -50,8 +53,20 @@ export class UsersController {
   // GET ALL USERS - ADMIN ONLY
   @Get()
   @Roles(UserRole.ADMIN)
-  public async getUsers(): Promise<User[]> {
-    return await this.usersService.getUsers();
+  public async getUsers(
+    @Query() queryDto: QueryUsersDto,
+  ): Promise<PaginatedResponse<User>> {
+    return await this.usersService.getUsers(queryDto);
+  }
+
+  // UPDATE SINGLE USER - ADMIN ONLY
+  @Patch(':id')
+  @Roles(UserRole.ADMIN)
+  public async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return await this.usersService.updateUserProfile(id, updateUserDto);
   }
 
   // GET SINGLE USER - ADMIN ONLY

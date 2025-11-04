@@ -6,16 +6,8 @@ import { toast } from "sonner";
 
 export function useDataExport() {
   const dataExportFn = async () => {
-    try {
-      const data = await apiClient.post<DataExportResponse>(
-        "/users/export-data"
-      );
-      return data;
-    } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.log("FRONTEND - Error return from the backend api: ", error);
-      }
-    }
+    const data = await apiClient.post<DataExportResponse>("/users/export-data");
+    return data;
   };
 
   return useMutation({
@@ -31,6 +23,9 @@ export function useDataExport() {
       toast.error(
         error.message || "Failed to send export data to user email address"
       );
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
     },
   });
 }

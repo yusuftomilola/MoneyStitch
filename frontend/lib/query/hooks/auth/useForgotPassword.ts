@@ -18,22 +18,22 @@ export const useForgotPassword = () => {
       forgotPasswordCredentials
     );
 
-    console.log("API Response from Backend:", response);
-
     return response;
   }
 
   return useMutation({
     mutationKey: mutationKeys.forgotPassword,
     mutationFn: forgotPasswordFn,
-    onSuccess: (data) => {
-      console.log("Data from the hook", data);
+    onSuccess: () => {
       logout();
     },
-    onError: () => {
+    onError: (error) => {
       toast.success(
         "If an account with that email exists, a password reset link has been sent."
       );
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
     },
   });
 };

@@ -6,3 +6,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMjA3NTA5N
 {
     "username": "falzman"
 }
+
+// UPDATE USER PROFILE - ADMIN ONLY
+PATCH http://localhost:5000/api/v1/users/9ef2e01f-3ad7-428d-b0d9-7867d29f5401/edit
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMjA3NTA5NC0xZWIxLTQ5ZDYtODgzNC1jM2E5MjY4N2Q0MjciLCJyb2xlIjoidXNlciIsImVtYWlsIjoiZmFsYWRleXVzdWY1NEBnbWFpbC5jb20iLCJpYXQiOjE3NjE1NDAyMTAsImV4cCI6MTc2MTYyNjYxMH0.ZddQFc_6uhQKhkKcRpmRu1GfSzipOZB5wsEe7qo7K0k
+
+{
+    "username": "falzman"
+}

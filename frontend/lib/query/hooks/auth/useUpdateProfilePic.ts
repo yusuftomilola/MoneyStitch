@@ -32,8 +32,11 @@ export function useUpdateProfilePic() {
 
       toast.success(response.message || "Profile picture updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast.error(error.message || "Failed to update profile picture");
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
     },
   });
 }

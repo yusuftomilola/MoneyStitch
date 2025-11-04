@@ -12,6 +12,7 @@ import { EmailModule } from './email/email.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import environmentValidation from './environment.validation';
+import { PaginationModule } from './common/pagination/pagination.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import environmentValidation from './environment.validation';
         limit: 1,
       },
     ]),
+    PaginationModule,
   ],
   controllers: [AppController],
   providers: [
