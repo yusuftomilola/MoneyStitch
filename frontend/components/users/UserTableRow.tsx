@@ -125,7 +125,7 @@ export function UserTableRow({ user }: UserTableRowProps) {
             </div>
             {/* Name and Username */}
             <div>
-              <div className="font-medium text-[#1A1A40]">
+              <div className="font-medium text-[#1A1A40] text-sm">
                 {user.firstname} {user.lastname}
               </div>
               {user.username && (
