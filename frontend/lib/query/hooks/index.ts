@@ -9,6 +9,8 @@ import { useResendVerifyEmail } from "./auth/useResendVerifyEmail";
 import { useDataExport } from "./auth/useDataExport";
 import { useUpdateProfile } from "./auth/useUpdateProfile";
 import { useUpdateProfilePic } from "./auth/useUpdateProfilePic";
+import { useSuspendUser } from "./users/useSuspendUser";
+import { useActivateUser } from "./users/useActivateUser";
 
 export {
   useRegisterUser,
@@ -22,4 +24,6 @@ export {
   useDataExport,
   useUpdateProfile,
   useUpdateProfilePic,
+  useSuspendUser,
+  useActivateUser,
 };

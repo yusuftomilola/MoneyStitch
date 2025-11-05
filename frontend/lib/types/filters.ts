@@ -1,3 +1,4 @@
+// lib/types/filters.ts
 import { BaseFilters } from "./common";
 
 export interface UsersFilters extends BaseFilters {

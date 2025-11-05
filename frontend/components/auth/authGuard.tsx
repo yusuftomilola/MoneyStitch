@@ -25,27 +25,27 @@ export function AuthGuard({
   useEffect(() => {
     if (isLoading) return;
 
-    if (requireAuth && !isAuthenticated) {
-      const currentPath = window.location.pathname;
-      const loginUrl = `/login?redirect=${encodeURIComponent(currentPath)}`;
-      router.push(loginUrl);
-      return;
-    }
+    // if (requireAuth && !isAuthenticated) {
+    //   const currentPath = window.location.pathname;
+    //   const loginUrl = `/login?redirect=${encodeURIComponent(currentPath)}`;
+    //   router.push(loginUrl);
+    //   return;
+    // }
 
     if (requiredRole && user && user.role !== requiredRole) {
-      router.push("/dashboard");
+      router.push("/dashboard?reason=`permission-not-granted`");
       return;
     }
 
     // handle redirect after login
-    const redirectPath = searchParams.get("redirect");
-    if (
-      isAuthenticated &&
-      redirectPath &&
-      window.location.pathname === "/login"
-    ) {
-      router.push(redirectPath);
-    }
+    // const redirectPath = searchParams.get("redirect");
+    // if (
+    //   isAuthenticated &&
+    //   redirectPath &&
+    //   window.location.pathname === "/login"
+    // ) {
+    //   router.push(redirectPath);
+    // }
   }, [
     isAuthenticated,
     user,
@@ -57,37 +57,37 @@ export function AuthGuard({
   ]);
 
   // Show loading state
-  if (isLoading) {
-    return (
-      fallback || (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Loading...</p>
-          </div>
-        </div>
-      )
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     fallback || (
+  //       <div className="min-h-screen flex items-center justify-center">
+  //         <div className="text-center">
+  //           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+  //           <p className="text-muted-foreground">Loading...</p>
+  //         </div>
+  //       </div>
+  //     )
+  //   );
+  // }
 
   // check authentication requirement
-  if (requireAuth && !isAuthenticated) {
-    return (
-      fallback || (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-muted-foreground">Redirecting to login...</p>
-          </div>
-        </div>
-      )
-    );
-  }
+  // if (requireAuth && !isAuthenticated) {
+  //   return (
+  //     fallback || (
+  //       <div className="min-h-screen flex items-center justify-center">
+  //         <div className="text-center">
+  //           <p className="text-muted-foreground">Redirecting to login...</p>
+  //         </div>
+  //       </div>
+  //     )
+  //   );
+  // }
 
   // check role requirement
   if (requiredRole && user && user.role !== requiredRole) {
     return (
       fallback || (
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-cente">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
             <p className="text-muted-foreground">

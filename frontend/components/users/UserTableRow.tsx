@@ -13,9 +13,7 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Clock,
   Trash2,
-  Eye,
 } from "lucide-react";
 import { useDeleteUser } from "@/lib/query/hooks/users/useDeleteUser";
 import ConfirmDeleteModal from "@/components/common/ConfirmDeleteModal";
@@ -41,26 +39,27 @@ export function UserTableRow({ user }: UserTableRowProps) {
         </span>
       );
     }
-    if (!user.isActive) {
+    return (
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+        <CheckCircle className="w-3 h-3" />
+        Active
+      </span>
+    );
+  };
+
+  const getEmailVerificationBadge = (isVerified: boolean) => {
+    if (isVerified) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
-          <Clock className="w-3 h-3" />
-          Inactive
-        </span>
-      );
-    }
-    if (!user.isEmailVerified) {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
-          <AlertCircle className="w-3 h-3" />
-          Unverified
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+          <CheckCircle className="w-3 h-3" />
+          Verified
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
-        <CheckCircle className="w-3 h-3" />
-        Verified
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
+        <AlertCircle className="w-3 h-3" />
+        Unverified
       </span>
     );
   };
@@ -159,6 +158,11 @@ export function UserTableRow({ user }: UserTableRowProps) {
 
         {/* Status */}
         <td className="px-6 py-4">{getStatusBadge(user)}</td>
+
+        {/* Email Verification */}
+        <td className="px-6 py-4">
+          {getEmailVerificationBadge(user.isEmailVerified)}
+        </td>
 
         {/* Joined Date */}
         <td className="px-6 py-4 text-sm text-gray-600">

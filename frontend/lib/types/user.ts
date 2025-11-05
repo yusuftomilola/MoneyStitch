@@ -134,3 +134,13 @@ export interface UpdateUserProfilePictureResponse {
   message: string;
   user: User;
 }
+
+export interface SuspendUserResponse {
+  status: string;
+  message: string;
+}
+
+export interface ActivateUserResponse {
+  status: string;
+  message: string;
+}

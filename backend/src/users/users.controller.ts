@@ -17,7 +17,12 @@ import { UserRole } from './enums/userRoles.enum';
 import { GetCurrentUser } from 'src/auth/decorators/getCurrentUser.decorator';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
-import { DataExportResponse, UpdateUserResponse } from './interfaces/responses';
+import {
+  ActivateUserResponse,
+  DataExportResponse,
+  SuspendUserResponse,
+  UpdateUserResponse,
+} from './interfaces/responses';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { QueryUsersDto } from './dto/user-filter.dto';
 import { PaginatedResponse } from 'src/common/pagination/interfaces/paginated-response.interface';
@@ -82,6 +87,26 @@ export class UsersController {
   @Roles(UserRole.ADMIN)
   public async deleteSingleUser(@Param('id') userId: string) {
     return await this.usersService.deleteSingleUserAdmin(userId);
+  }
+
+  // SUSPEND SINGLE USER - ADMIN ONLY
+  @Post(':id/suspend')
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRole.ADMIN)
+  public async suspendSingleUser(
+    @Param('id') userId: string,
+  ): Promise<SuspendUserResponse> {
+    return await this.usersService.suspendSingleUserAdmin(userId);
+  }
+
+  // ACTIVATE SINGLE USER - ADMIN ONLY
+  @Post(':id/activate')
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRole.ADMIN)
+  public async activateSingleUser(
+    @Param('id') userId: string,
+  ): Promise<ActivateUserResponse> {
+    return await this.usersService.activateSingleUserAdmin(userId);
   }
 
   // USER DATA EXPORT

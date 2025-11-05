@@ -25,8 +25,10 @@ import { ChangePasswordDto } from 'src/auth/dto/changeUserPassword.dto';
 import { ChangePasswordProvider } from './changeUserPassword.provider';
 import { GetUserProfileProvider } from './getUserProfile.provider';
 import {
+  ActivateUserResponse,
   DataExportResponse,
   DeleteUserResponse,
+  SuspendUserResponse,
   UpdateUserResponse,
 } from '../interfaces/responses';
 import { UpdateUserDto } from '../dto/updateUser.dto';
@@ -35,6 +37,8 @@ import { DeleteUserProvider } from './deleteUser.provider';
 import { DataExportService } from './data-export.service';
 import { PaginatedResponse } from 'src/common/pagination/interfaces/paginated-response.interface';
 import { QueryUsersDto } from '../dto/user-filter.dto';
+import { SuspendUserProvider } from './suspendUser.provider';
+import { ActivateUserProvider } from './activeUser.provider';
 
 @Injectable()
 export class UsersService {
@@ -53,6 +57,8 @@ export class UsersService {
     private readonly updateUserProvider: UpdateUserProvider,
     private readonly deleteUserProvider: DeleteUserProvider,
     private readonly dataExportProvider: DataExportService,
+    private readonly suspendUserProvider: SuspendUserProvider,
+    private readonly activateUserProvider: ActivateUserProvider,
   ) {}
 
   // FIND USER BY ID
@@ -158,5 +164,19 @@ export class UsersService {
   // USER DATA EXPORT
   public async exportUserData(userId: string): Promise<DataExportResponse> {
     return await this.dataExportProvider.exportUserData(userId);
+  }
+
+  // SUSPEND A SINGLE USER - ADMIN
+  public async suspendSingleUserAdmin(
+    userId: string,
+  ): Promise<SuspendUserResponse> {
+    return await this.suspendUserProvider.suspendUser(userId);
+  }
+
+  // ACTIVATE A SINGLE USER - ADMIN
+  public async activateSingleUserAdmin(
+    userId: string,
+  ): Promise<ActivateUserResponse> {
+    return await this.activateUserProvider.activateUser(userId);
   }
 }

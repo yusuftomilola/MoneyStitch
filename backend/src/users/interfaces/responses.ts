@@ -15,3 +15,13 @@ export interface DataExportResponse {
   status: string;
   message: string;
 }
+
+export interface SuspendUserResponse {
+  status: string;
+  message: string;
+}
+
+export interface ActivateUserResponse {
+  status: string;
+  message: string;
+}

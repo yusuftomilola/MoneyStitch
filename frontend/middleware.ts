@@ -4,12 +4,8 @@ const publicRoutes = ["/", "/login", "/register", "/forgot-password"];
 
 const protectedRoutes = {
   "/dashboard": ["users", "admin"],
-  "/users": ["admin"],
   "/admin": ["admin"],
   "/settings": ["admin", "user"],
-  "/settings/profile": ["admin", "user"],
-  "/settings/security": ["admin", "user"],
-  "/settings/account": ["admin", "user"],
 } as const;
 
 export function middleware(request: NextRequest) {

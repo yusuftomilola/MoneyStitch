@@ -3,6 +3,7 @@
 
 import { useUser } from "@/lib/query/hooks/users/useUser";
 import { useDeleteUser } from "@/lib/query/hooks/users/useDeleteUser";
+import { useSuspendUser, useActivateUser } from "@/lib/query/hooks";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { format } from "date-fns";
@@ -32,6 +33,17 @@ export default function UserDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const userId = params.id as string;
+
+  const suspendUser = useSuspendUser();
+  const activateUser = useActivateUser();
+
+  const handleSuspendUser = async () => {
+    suspendUser.mutate(userId);
+  };
+
+  const handleActivateUser = async () => {
+    activateUser.mutateAsync(userId);
+  };
 
   const { data: user, isLoading, isError } = useUser({ userId });
   const deleteUser = useDeleteUser();
@@ -226,14 +238,22 @@ export default function UserDetailsPage() {
                 </Link>
 
                 {user.isSuspended ? (
-                  <button className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors shadow-sm cursor-pointer">
+                  <button
+                    onClick={handleActivateUser}
+                    disabled={activateUser.isPending}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors shadow-sm cursor-pointer"
+                  >
                     <CheckCheck className="w-4 h-4" />
-                    Activate
+                    {activateUser.isPending ? "Activating..." : "Activate"}
                   </button>
                 ) : (
-                  <button className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-medium transition-colors shadow-sm cursor-pointer">
+                  <button
+                    onClick={handleSuspendUser}
+                    disabled={suspendUser.isPending}
+                    className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-medium transition-colors shadow-sm cursor-pointer"
+                  >
                     <Ban className="w-4 h-4" />
-                    Suspend
+                    {suspendUser.isPending ? "Suspending..." : "Suspend"}
                   </button>
                 )}
 
@@ -243,7 +263,7 @@ export default function UserDetailsPage() {
                   className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
-                  Delete
+                  {deleteUser.isPending ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>

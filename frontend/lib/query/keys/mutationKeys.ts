@@ -11,4 +11,6 @@ export const mutationKeys = {
   dataExport: ["dataExport"] as const,
   updateProfile: ["updateProfile"] as const,
   updateProfilePic: ["updateProfilePic"] as const,
+  suspendUser: ["suspendUser"] as const,
+  activateUser: ["activateUser"] as const,
 };

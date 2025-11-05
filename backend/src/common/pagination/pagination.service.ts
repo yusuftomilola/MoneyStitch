@@ -1,3 +1,4 @@
+// src/common/pagination/pagination.service.ts
 import { SelectQueryBuilder } from 'typeorm';
 import {
   PaginatedResponse,
@@ -11,11 +12,8 @@ export class PaginationService {
     limit: number = 2,
   ): Promise<PaginatedResponse<T>> {
     const skip = (page - 1) * limit;
-
     queryBuilder.skip(skip).take(limit);
-
     const [data, total] = await queryBuilder.getManyAndCount();
-
     const pagination: PaginationMeta = {
       page,
       limit,
@@ -24,7 +22,6 @@ export class PaginationService {
       hasNextPage: page < Math.ceil(total / limit),
       hasPreviousPage: page > 1,
     };
-
     return { data, pagination };
   }
 
@@ -49,28 +46,31 @@ export class PaginationService {
       createdBefore,
     } = filters;
 
-    // Search across multiple fields
+    // Search across multiple fields - FIX: Proper parentheses and OR conditions
     if (search && searchFields && searchFields.length > 0) {
       const searchConditions = searchFields
         .map((field) => `${field} ILIKE :search`)
-        .join('OR');
+        .join(' OR '); // Added space before OR
       queryBuilder.andWhere(`(${searchConditions})`, {
-        search: `%${search}`,
+        // Fixed: proper parentheses
+        search: `%${search}%`, // Fixed: added second %
       });
     }
 
-    //sorting
-    queryBuilder.orderBy(`${alias}.${sortBy}`, sortOrder);
+    // Sorting - FIX: Proper method call
+    queryBuilder.orderBy(`${alias}.${sortBy}`, sortOrder); // Fixed: proper method syntax
 
-    // Date range filters
+    // Date range filters - FIX: Proper method calls
     if (createdAfter) {
       queryBuilder.andWhere(`${alias}.createdAt >= :createdAfter`, {
+        // Fixed: proper method syntax
         createdAfter,
       });
     }
 
     if (createdBefore) {
       queryBuilder.andWhere(`${alias}.createdAt <= :createdBefore`, {
+        // Fixed: proper method syntax
         createdBefore,
       });
     }

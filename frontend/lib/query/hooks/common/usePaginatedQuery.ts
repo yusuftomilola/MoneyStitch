@@ -1,9 +1,9 @@
 import { apiClient } from "@/lib/apiClient";
-import { PaginatedResponse, PaginationParams } from "@/lib/types/common";
+import type { PaginatedResponse, PaginationParams } from "@/lib/types/common";
 import {
   keepPreviousData,
   useQuery,
-  UseQueryOptions,
+  type UseQueryOptions,
 } from "@tanstack/react-query";
 
 interface UsePaginatedQueryOptions<T, TFilters> {
@@ -25,7 +25,10 @@ export function usePaginatedQuery<T, TFilters extends object>({
       const queryString = new URLSearchParams();
 
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
+        // Check for boolean type first to ensure false values are included
+        if (typeof value === "boolean") {
+          queryString.append(key, String(value));
+        } else if (value !== undefined && value !== null && value !== "") {
           queryString.append(key, String(value));
         }
       });

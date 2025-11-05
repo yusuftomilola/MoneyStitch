@@ -21,6 +21,8 @@ import { GetUserProfileProvider } from './providers/getUserProfile.provider';
 import { UpdateUserProvider } from './providers/updateUser.provider';
 import { DeleteUserProvider } from './providers/deleteUser.provider';
 import { DataExportService } from './providers/data-export.service';
+import { SuspendUserProvider } from './providers/suspendUser.provider';
+import { ActivateUserProvider } from './providers/activeUser.provider';
 
 @Module({
   imports: [
@@ -47,6 +49,8 @@ import { DataExportService } from './providers/data-export.service';
     UpdateUserProvider,
     DeleteUserProvider,
     DataExportService,
+    SuspendUserProvider,
+    ActivateUserProvider,
   ],
   exports: [UsersService],
 })

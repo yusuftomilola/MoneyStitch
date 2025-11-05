@@ -14,7 +14,7 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Clock,
+  MailCheck,
 } from "lucide-react";
 
 interface UserCardProps {
@@ -28,25 +28,32 @@ export function UserCard({ user }: UserCardProps) {
 
   const getStatusColor = (user: User) => {
     if (user.isSuspended) return "bg-red-50 text-red-700 border-red-200";
-    if (!user.isActive) return "bg-gray-50 text-gray-700 border-gray-200";
-    if (!user.isEmailVerified)
-      return "bg-yellow-50 text-yellow-700 border-yellow-200";
     return "bg-green-50 text-green-700 border-green-200";
   };
 
   const getStatusText = (user: User) => {
     if (user.isSuspended) return "Suspended";
-    if (!user.isActive) return "Inactive";
-    if (!user.isEmailVerified) return "Unverified";
     return "Active";
   };
 
   const getStatusIcon = (user: User) => {
     if (user.isSuspended) return <XCircle className="w-4 h-4 text-red-600" />;
-    if (!user.isActive) return <Clock className="w-4 h-4 text-gray-600" />;
-    if (!user.isEmailVerified)
-      return <AlertCircle className="w-4 h-4 text-yellow-600" />;
     return <CheckCircle className="w-4 h-4 text-green-600" />;
+  };
+
+  const getEmailVerificationColor = (isVerified: boolean) => {
+    if (isVerified) return "bg-green-50 text-green-700 border-green-200";
+    return "bg-yellow-50 text-yellow-700 border-yellow-200";
+  };
+
+  const getEmailVerificationText = (isVerified: boolean) => {
+    if (isVerified) return "Verified";
+    return "Unverified";
+  };
+
+  const getEmailVerificationIcon = (isVerified: boolean) => {
+    if (isVerified) return <CheckCircle className="w-4 h-4 text-green-600" />;
+    return <AlertCircle className="w-4 h-4 text-yellow-600" />;
   };
 
   return (
@@ -141,6 +148,22 @@ export function UserCard({ user }: UserCardProps) {
             >
               {getStatusIcon(user)}
               {getStatusText(user)}
+            </span>
+          </div>
+
+          {/* Email Verification Badge */}
+          <div className="flex flex-col col-span-2">
+            <span className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+              <MailCheck className="w-3 h-3" />
+              Email Verification
+            </span>
+            <span
+              className={`inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border ${getEmailVerificationColor(
+                user.isEmailVerified
+              )}`}
+            >
+              {getEmailVerificationIcon(user.isEmailVerified)}
+              {getEmailVerificationText(user.isEmailVerified)}
             </span>
           </div>
         </div>
