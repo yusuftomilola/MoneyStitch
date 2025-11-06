@@ -1,3 +1,4 @@
+// users.controller.ts - Clean version with audit decorator
 import {
   Body,
   Controller,
@@ -26,6 +27,8 @@ import {
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { QueryUsersDto } from './dto/user-filter.dto';
 import { PaginatedResponse } from 'src/common/pagination/interfaces/paginated-response.interface';
+import { Audit } from 'src/audit-log/decorators/audit.decorator';
+import { AuditAction } from 'src/audit-log/entities/audit-log.entity';
 
 @Controller('api/v1/users')
 export class UsersController {
@@ -34,14 +37,14 @@ export class UsersController {
   // GET USER PROFILE - USER
   @Get('me')
   @HttpCode(HttpStatus.OK)
+  @Audit(AuditAction.USER_PROFILE_VIEW)
   public async getUserProfile(@GetCurrentUser() user: User): Promise<User> {
-    console.log('Current user:', user);
-    console.log('User ID:', user.id);
     return await this.usersService.userProfile(user);
   }
 
   // UPDATE USER OWN PROFILE - USER
   @Patch('me/update')
+  @Audit(AuditAction.USER_PROFILE_UPDATE)
   public async updateUserProfile(
     @GetCurrentUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
@@ -51,6 +54,7 @@ export class UsersController {
 
   // DELETE USER OWN ACCOUNT - USER
   @Delete('me/delete')
+  @Audit(AuditAction.USER_ACCOUNT_DELETE)
   public async deleteUserAccount(@GetCurrentUser() user: User) {
     return await this.usersService.deleteSingleUser(user.id);
   }
@@ -58,6 +62,7 @@ export class UsersController {
   // GET ALL USERS - ADMIN ONLY
   @Get()
   @Roles(UserRole.ADMIN)
+  // @Audit(AuditAction.ADMIN_USERS_LIST)
   public async getUsers(
     @Query() queryDto: QueryUsersDto,
   ): Promise<PaginatedResponse<User>> {
@@ -67,6 +72,7 @@ export class UsersController {
   // UPDATE SINGLE USER - ADMIN ONLY
   @Patch(':id')
   @Roles(UserRole.ADMIN)
+  @Audit(AuditAction.ADMIN_USER_UPDATE)
   public async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -77,14 +83,15 @@ export class UsersController {
   // GET SINGLE USER - ADMIN ONLY
   @Get(':id')
   @Roles(UserRole.ADMIN)
+  @Audit(AuditAction.ADMIN_USER_VIEW)
   public async getSingleUser(@Param('id') userId: string): Promise<User> {
-    console.log(userId);
     return await this.usersService.getSingleUser(userId);
   }
 
   // DELETE SINGLE USER - ADMIN ONLY
   @Delete(':id')
   @Roles(UserRole.ADMIN)
+  @Audit(AuditAction.ADMIN_USER_DELETE)
   public async deleteSingleUser(@Param('id') userId: string) {
     return await this.usersService.deleteSingleUserAdmin(userId);
   }
@@ -93,6 +100,7 @@ export class UsersController {
   @Post(':id/suspend')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRole.ADMIN)
+  @Audit(AuditAction.ADMIN_USER_SUSPEND)
   public async suspendSingleUser(
     @Param('id') userId: string,
   ): Promise<SuspendUserResponse> {
@@ -103,6 +111,7 @@ export class UsersController {
   @Post(':id/activate')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRole.ADMIN)
+  @Audit(AuditAction.ADMIN_USER_ACTIVATE)
   public async activateSingleUser(
     @Param('id') userId: string,
   ): Promise<ActivateUserResponse> {
@@ -118,6 +127,7 @@ export class UsersController {
     },
   })
   @Post('export-data')
+  @Audit(AuditAction.USER_DATA_EXPORT)
   public async exportUserData(
     @GetCurrentUser() user: User,
   ): Promise<DataExportResponse> {

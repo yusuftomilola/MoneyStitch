@@ -32,6 +32,8 @@ import {
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { VerifyEmailDto } from './dto/verifyEmail.dto';
 import { ChangePasswordDto } from './dto/changeUserPassword.dto';
+import { Audit } from 'src/audit-log/decorators/audit.decorator';
+import { AuditAction } from 'src/audit-log/entities/audit-log.entity';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -44,6 +46,7 @@ export class AuthController {
   @IsPublic()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
+  @Audit(AuditAction.USER_REGISTER)
   public async createUser(
     @Body() createUserDto: CreateUserDto,
     @Res({ passthrough: true }) response: Response,
@@ -56,6 +59,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
+  @Audit(AuditAction.USER_LOGIN)
   public async loginUser(
     @Body() loginUserDto: LoginUserDto,
     @GetCurrentUser() user: User,
@@ -76,6 +80,7 @@ export class AuthController {
   @Post('refresh-token')
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatus.OK)
+  @Audit(AuditAction.TOKEN_REFRESH)
   public async refreshToken(
     @Req() request: Request,
     @GetCurrentUser() user: User,
@@ -88,6 +93,7 @@ export class AuthController {
   // LOG OUT
   @Post('logout')
   @HttpCode(HttpStatus.OK)
+  @Audit(AuditAction.USER_LOGOUT)
   public async logout(
     @GetCurrentUser() user: User,
     @Req() request: Request,
@@ -150,6 +156,7 @@ export class AuthController {
   @IsPublic()
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
+  @Audit(AuditAction.PASSWORD_RESET_REQUEST)
   public async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,
   ): Promise<ForgotPasswordResponse> {
@@ -160,6 +167,7 @@ export class AuthController {
   @IsPublic()
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
+  @Audit(AuditAction.PASSWORD_RESET_COMPLETE)
   public async resetpassword(
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<ResetPasswordResponse> {
@@ -170,6 +178,7 @@ export class AuthController {
   @IsPublic()
   @Post('verify-email')
   @HttpCode(HttpStatus.OK)
+  @Audit(AuditAction.EMAIL_VERIFIED)
   public async verifyEmail(
     @Body() verifyEmailDto: VerifyEmailDto,
   ): Promise<VerifyEmailResponse> {
@@ -179,6 +188,7 @@ export class AuthController {
   // RESEND VERIFICATION EMAIL
   @Post('resend-verify-email')
   @HttpCode(HttpStatus.OK)
+  @Audit(AuditAction.EMAIL_VERIFICATION_SENT)
   public async resendVerifyEmail(
     @GetCurrentUser() user: User,
   ): Promise<ResendVerifyEmailResponse> {
@@ -188,6 +198,7 @@ export class AuthController {
   // CHANGE PASSWORD
   @Post('change-password')
   @HttpCode(HttpStatus.OK)
+  @Audit(AuditAction.PASSWORD_CHANGE)
   public async changePassword(
     @GetCurrentUser() user: User,
     @Body() changePasswordDto: ChangePasswordDto,

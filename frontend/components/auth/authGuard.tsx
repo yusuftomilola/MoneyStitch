@@ -33,7 +33,7 @@ export function AuthGuard({
     // }
 
     if (requiredRole && user && user.role !== requiredRole) {
-      router.push("/dashboard?reason=`permission-not-granted`");
+      router.push("/dashboard?reason=permission-not-granted");
       return;
     }
 

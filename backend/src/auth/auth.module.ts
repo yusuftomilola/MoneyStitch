@@ -17,6 +17,7 @@ import { RefreshTokensProvider } from './providers/refreshTokens.provider';
 import { FindOneRefreshTokenProvider } from './providers/findOneRefreshToken.provider';
 import { GenerateTokensProvider } from './providers/generateTokens.provider';
 import { EmailModule } from 'src/email/email.module';
+import { AuditLogModule } from 'src/audit-log/audit-log.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { EmailModule } from 'src/email/email.module';
     }),
     TypeOrmModule.forFeature([RefreshToken]),
     EmailModule,
+    AuditLogModule,
   ],
   controllers: [AuthController],
   providers: [

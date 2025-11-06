@@ -13,6 +13,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import environmentValidation from './environment.validation';
 import { PaginationModule } from './common/pagination/pagination.module';
+import { AuditLogModule } from './audit-log/audit-log.module';
 
 @Module({
   imports: [
@@ -23,20 +24,32 @@ import { PaginationModule } from './common/pagination/pagination.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        database: configService.get('DATABASE_NAME'),
-        password: configService.get('DATABASE_PASSWORD'),
-        username: configService.get('DATABASE_USERNAME'),
-        port: +configService.get('DATABASE_PORT'),
-        host: configService.get('DATABASE_HOST'),
-        autoLoadEntities: true,
-        synchronize: true,
-        ssl:
-          configService.get('NODE_ENV') === 'production'
-            ? { rejectUnauthorized: false }
-            : false,
-      }),
+      useFactory: (configService: ConfigService) => {
+        if (configService.get('NODE_ENV') === 'production') {
+          return {
+            type: 'postgres',
+            database: configService.get('DATABASE_NAME_PRODUCTION'),
+            password: configService.get('DATABASE_PASSWORD_PRODUCTION'),
+            username: configService.get('DATABASE_USERNAME_PRODUCTION'),
+            port: +configService.get('DATABASE_PORT_PRODUCTION'),
+            host: configService.get('DATABASE_HOST_PRODUCTION'),
+            autoLoadEntities: true,
+            synchronize: true,
+            ssl: { rejectUnauthorized: false },
+          };
+        } else {
+          return {
+            type: 'postgres',
+            database: configService.get('DATABASE_NAME_DEVELOPMENT'),
+            password: configService.get('DATABASE_PASSWORD_DEVELOPMENT'),
+            username: configService.get('DATABASE_USERNAME_DEVELOPMENT'),
+            port: +configService.get('DATABASE_PORT_DEVELOPMENT'),
+            host: configService.get('DATABASE_HOST_DEVELOPMENT'),
+            autoLoadEntities: true,
+            synchronize: true,
+          };
+        }
+      },
     }),
     AuthModule,
     UsersModule,
@@ -50,6 +63,7 @@ import { PaginationModule } from './common/pagination/pagination.module';
       },
     ]),
     PaginationModule,
+    AuditLogModule,
   ],
   controllers: [AppController],
   providers: [
