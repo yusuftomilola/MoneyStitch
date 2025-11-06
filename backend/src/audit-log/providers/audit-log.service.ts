@@ -1,7 +1,7 @@
 // providers/audit-log.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import {
   AuditLog,
   AuditAction,
@@ -85,27 +85,72 @@ export class AuditLogService {
       ]);
 
     // Apply base filters
-    this.paginationService.applyBaseFilters(
-      queryBuilder,
-      {
-        search,
-        searchFields: [
-          'audit_log.action',
-          'audit_log.ipAddress',
-          'user.email',
-          'user.firstname',
-          'user.lastname',
-          'targetUser.email',
-          'targetUser.firstname',
-          'targetUser.lastname',
-        ],
-        sortBy,
-        sortOrder,
+    // this.paginationService.applyBaseFilters(
+    //   queryBuilder,
+    //   {
+    //     search,
+    //     searchFields: [
+    //       'audit_log.action',
+    //       'audit_log.ipAddress',
+    //       'user.email',
+    //       'user.firstname',
+    //       'user.lastname',
+    //       'targetUser.email',
+    //       'targetUser.firstname',
+    //       'targetUser.lastname',
+    //     ],
+    //     sortBy,
+    //     sortOrder,
+    //     createdAfter,
+    //     createdBefore,
+    //   },
+    //   'audit_log',
+    // );
+
+    // Apply search filter with OR conditions and NULL handling
+    if (search) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('LOWER(audit_log.action) LIKE LOWER(:search)', {
+            search: `%${search}%`,
+          })
+            .orWhere('LOWER(audit_log.ipAddress) LIKE LOWER(:search)', {
+              search: `%${search}%`,
+            })
+            .orWhere('LOWER(user.email) LIKE LOWER(:search)', {
+              search: `%${search}%`,
+            })
+            .orWhere('LOWER(user.firstname) LIKE LOWER(:search)', {
+              search: `%${search}%`,
+            })
+            .orWhere('LOWER(user.lastname) LIKE LOWER(:search)', {
+              search: `%${search}%`,
+            })
+            .orWhere('LOWER(targetUser.email) LIKE LOWER(:search)', {
+              search: `%${search}%`,
+            })
+            .orWhere('LOWER(targetUser.firstname) LIKE LOWER(:search)', {
+              search: `%${search}%`,
+            })
+            .orWhere('LOWER(targetUser.lastname) LIKE LOWER(:search)', {
+              search: `%${search}%`,
+            });
+        }),
+      );
+    }
+
+    // Apply date filters
+    if (createdAfter) {
+      queryBuilder.andWhere('audit_log.createdAt >= :createdAfter', {
         createdAfter,
+      });
+    }
+
+    if (createdBefore) {
+      queryBuilder.andWhere('audit_log.createdAt <= :createdBefore', {
         createdBefore,
-      },
-      'audit_log',
-    );
+      });
+    }
 
     // Apply specific filters
     if (action) {
@@ -129,6 +174,10 @@ export class AuditLogService {
     if (ipAddress) {
       queryBuilder.andWhere('audit_log.ipAddress = :ipAddress', { ipAddress });
     }
+
+    // Apply sorting
+    const order = sortOrder === 'ASC' ? 'ASC' : 'DESC';
+    queryBuilder.orderBy(`audit_log.${sortBy}`, order);
 
     return this.paginationService.paginate(queryBuilder, page, limit);
   }

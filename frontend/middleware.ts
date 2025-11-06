@@ -6,6 +6,7 @@ const protectedRoutes = {
   "/dashboard": ["users", "admin"],
   "/admin": ["admin"],
   "/settings": ["admin", "user"],
+  "/my-activity": ["admin", "user"],
 } as const;
 
 export function middleware(request: NextRequest) {
