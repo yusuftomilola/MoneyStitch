@@ -1,3 +1,4 @@
+// app/admin/page.tsx
 "use client";
 import { useState, Suspense } from "react";
 import { useUsers } from "@/lib/query/hooks/users/useUsers";
