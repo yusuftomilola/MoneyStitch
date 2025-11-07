@@ -8,6 +8,7 @@ import { AuditLogTable } from "@/components/audit-logs/AuditLogTable";
 import { Pagination } from "@/components/common/Pagination";
 import { AuditLogFilters as AuditLogFiltersType } from "@/lib/types/audit-log";
 import { Activity, Shield, TrendingUp, Clock } from "lucide-react";
+import { Suspense } from "react";
 
 export default function AuditLogsPage() {
   const [page, setPage] = useState(1);
@@ -69,108 +70,112 @@ export default function AuditLogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3">
-            <Shield className="w-8 h-8 text-[#2ECC71]" />
-            <div>
-              <h1 className="text-3xl font-bold text-[#1A1A40]">Audit Logs</h1>
-              <p className="text-sm text-gray-600">
-                Track and monitor all system activities
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Statistics Cards */}
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Logs
-                  </p>
-                  <p className="text-2xl font-bold text-[#1A1A40]">
-                    {stats.totalLogs.toLocaleString()}
-                  </p>
-                </div>
-                <Activity className="w-8 h-8 text-[#2ECC71]" />
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Last 24 Hours
-                  </p>
-                  <p className="text-2xl font-bold text-[#1A1A40]">
-                    {stats.last24Hours.toLocaleString()}
-                  </p>
-                </div>
-                <Clock className="w-8 h-8 text-[#3498DB]" />
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Most Common Action
-                  </p>
-                  <p className="text-lg font-bold text-[#1A1A40]">
-                    {stats.actionBreakdown[0]?.action.split("_").join(" ") ||
-                      "N/A"}
-                  </p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-[#F1C40F]" />
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="min-h-screen bg-gray-50 pt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3">
+              <Shield className="w-8 h-8 text-[#2ECC71]" />
+              <div>
+                <h1 className="text-3xl font-bold text-[#1A1A40]">
+                  Audit Logs
+                </h1>
+                <p className="text-sm text-gray-600">
+                  Track and monitor all system activities
+                </p>
               </div>
             </div>
           </div>
-        )}
 
-        {/* Filters */}
-        <div className="mb-4">
-          <AuditLogFilters
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
-            onReset={handleResetFilters}
-          />
-        </div>
+          {/* Statistics Cards */}
+          {stats && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Logs
+                    </p>
+                    <p className="text-2xl font-bold text-[#1A1A40]">
+                      {stats.totalLogs.toLocaleString()}
+                    </p>
+                  </div>
+                  <Activity className="w-8 h-8 text-[#2ECC71]" />
+                </div>
+              </div>
 
-        {/* Results Count */}
-        <div className="mb-4 bg-white rounded-lg shadow-sm border border-gray-200 px-6 py-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#1A1A40]">
-              Showing{" "}
-              <span className="text-[#2ECC71] font-bold">
-                {data?.data.length}
-              </span>{" "}
-              of{" "}
-              <span className="text-[#2ECC71] font-bold">
-                {data?.pagination.total}
-              </span>{" "}
-              logs
-            </span>
-            <span className="text-xs text-gray-500">
-              Page {page} of {data?.pagination.totalPages}
-            </span>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      Last 24 Hours
+                    </p>
+                    <p className="text-2xl font-bold text-[#1A1A40]">
+                      {stats.last24Hours.toLocaleString()}
+                    </p>
+                  </div>
+                  <Clock className="w-8 h-8 text-[#3498DB]" />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      Most Common Action
+                    </p>
+                    <p className="text-lg font-bold text-[#1A1A40]">
+                      {stats.actionBreakdown[0]?.action.split("_").join(" ") ||
+                        "N/A"}
+                    </p>
+                  </div>
+                  <TrendingUp className="w-8 h-8 text-[#F1C40F]" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Filters */}
+          <div className="mb-4">
+            <AuditLogFilters
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+              onReset={handleResetFilters}
+            />
           </div>
-        </div>
 
-        {/* Audit Logs Table */}
-        <AuditLogTable logs={data?.data || []} />
-
-        {/* Pagination */}
-        {data && data.pagination.totalPages > 1 && (
-          <div className="mt-4">
-            <Pagination pagination={data.pagination} onPageChange={setPage} />
+          {/* Results Count */}
+          <div className="mb-4 bg-white rounded-lg shadow-sm border border-gray-200 px-6 py-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-[#1A1A40]">
+                Showing{" "}
+                <span className="text-[#2ECC71] font-bold">
+                  {data?.data.length}
+                </span>{" "}
+                of{" "}
+                <span className="text-[#2ECC71] font-bold">
+                  {data?.pagination.total}
+                </span>{" "}
+                logs
+              </span>
+              <span className="text-xs text-gray-500">
+                Page {page} of {data?.pagination.totalPages}
+              </span>
+            </div>
           </div>
-        )}
+
+          {/* Audit Logs Table */}
+          <AuditLogTable logs={data?.data || []} />
+
+          {/* Pagination */}
+          {data && data.pagination.totalPages > 1 && (
+            <div className="mt-4">
+              <Pagination pagination={data.pagination} onPageChange={setPage} />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 }
