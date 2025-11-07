@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAuthState } from "@/lib/store/authStore";
 import { Loader2 } from "lucide-react";
 import { Suspense } from "react";
@@ -20,7 +20,7 @@ export function AuthGuard({
   fallback,
 }: AuthGuardProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   const { user, isAuthenticated, isLoading } = useAuthState();
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export function AuthGuard({
     requireAuth,
     requiredRole,
     router,
-    searchParams,
+    // searchParams,
   ]);
 
   // Show loading state
