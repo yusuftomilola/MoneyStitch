@@ -342,8 +342,8 @@ const AccountSettingsPage = () => {
               <div>
                 <h4 className="font-semibold text-slate-800 mb-1">Sign Out</h4>
                 <p className="text-sm text-slate-600 mb-4">
-                  Sign out of your MoneyStitch account on this device. You'll
-                  need to sign in again to access your account.
+                  Sign out of your MoneyStitch account on this device.
+                  You&#39;ll need to sign in again to access your account.
                 </p>
                 <button
                   onClick={handleLogout}

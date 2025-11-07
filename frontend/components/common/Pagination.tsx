@@ -30,8 +30,8 @@ export function Pagination({ pagination, onPageChange }: PaginationProps) {
       pages.push(1);
 
       // Calculate range around current page
-      let start = Math.max(2, page - 1);
-      let end = Math.min(totalPages - 1, page + 1);
+      const start = Math.max(2, page - 1);
+      const end = Math.min(totalPages - 1, page + 1);
 
       // Add ellipsis if needed
       if (start > 2) {

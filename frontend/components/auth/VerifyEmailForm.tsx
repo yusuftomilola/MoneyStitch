@@ -212,7 +212,7 @@ const VerifyEmailForm = () => {
                   <Mail className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-blue-800 font-medium">
-                      Can't find your token?
+                      Can&#39;t find your token?
                     </p>
                     <p className="text-sm text-blue-700 mt-1">
                       Check your email for the verification link or request a

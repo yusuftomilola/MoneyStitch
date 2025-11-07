@@ -190,8 +190,8 @@ const SecuritySettingsPage = () => {
                       passwordStrength <= 2
                         ? "text-red-600"
                         : passwordStrength <= 4
-                        ? "text-yellow-600"
-                        : "text-emerald-600"
+                          ? "text-yellow-600"
+                          : "text-emerald-600"
                     }`}
                   >
                     {getStrengthLabel()}
@@ -376,7 +376,7 @@ const SecuritySettingsPage = () => {
                 Use a unique password
               </p>
               <p className="text-sm text-slate-600">
-                Don't reuse passwords from other websites
+                Don&#39;t reuse passwords from other websites
               </p>
             </div>
           </div>

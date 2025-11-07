@@ -87,7 +87,7 @@ const ForgotPasswordForm = () => {
                         Password Reset Instructions
                       </p>
                       <p className="text-sm text-blue-700 mt-1">
-                        We'll send you a secure link to reset your password.
+                        We&#39;ll send you a secure link to reset your password.
                         Check your email and follow the instructions.
                       </p>
                     </div>
@@ -135,7 +135,7 @@ const ForgotPasswordForm = () => {
                 {/* Additional Info */}
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
                   <p className="text-sm text-slate-700 font-medium mb-2">
-                    Didn't receive the email?
+                    Didn&#39;t receive the email?
                   </p>
                   <ul className="text-sm text-slate-600 space-y-1 ml-4 list-disc">
                     <li>Check your spam or junk folder</li>
@@ -162,7 +162,7 @@ const ForgotPasswordForm = () => {
 
             {!isSuccess && (
               <p className="text-slate-600">
-                Don't have an account?{" "}
+                Don&#39;t have an account?{" "}
                 <Link
                   href={"/register"}
                   className="text-emerald-600 hover:text-emerald-700 font-semibold cursor-pointer"
