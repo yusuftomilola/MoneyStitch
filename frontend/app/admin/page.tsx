@@ -1,4 +1,4 @@
-// pages/admin/users.tsx
+// app/admin/page.tsx
 "use client";
 import { useState } from "react";
 import { useUsers } from "@/lib/query/hooks/users/useUsers";
@@ -7,6 +7,7 @@ import { UserTable } from "@/components/users/UserTable";
 import { Pagination } from "@/components/common/Pagination";
 import { UsersFilters as UserFiltersType } from "@/lib/types/filters";
 import { Users } from "lucide-react";
+import { Suspense } from "react";
 
 export default function UsersPage() {
   const [page, setPage] = useState(1);
@@ -77,61 +78,63 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3">
-            <div>
-              <h1 className="text-3xl font-bold text-[#1A1A40]">
-                Users Management
-              </h1>
-              <p className="text-sm text-gray-600">
-                Manage and monitor all platform users
-              </p>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3">
+              <div>
+                <h1 className="text-3xl font-bold text-[#1A1A40]">
+                  Users Management
+                </h1>
+                <p className="text-sm text-gray-600">
+                  Manage and monitor all platform users
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Filters Section */}
-        <div className="mb-4">
-          <UserFilters
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
-            onReset={handleResetFilters}
-          />
-        </div>
-
-        {/* Results Count */}
-        <div className="mb-4 bg-white rounded-lg shadow-sm border border-gray-200 px-6 py-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#1A1A40]">
-              Showing{" "}
-              <span className="text-[#2ECC71] font-bold">
-                {data?.data.length}
-              </span>{" "}
-              of{" "}
-              <span className="text-[#2ECC71] font-bold">
-                {data?.pagination.total}
-              </span>{" "}
-              users
-            </span>
-            <span className="text-xs text-gray-500">
-              Page {page} of {data?.pagination.totalPages}
-            </span>
+          {/* Filters Section */}
+          <div className="mb-4">
+            <UserFilters
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+              onReset={handleResetFilters}
+            />
           </div>
-        </div>
 
-        {/* Users Table - Using the UserTable component */}
-        <UserTable users={data?.data || []} />
-
-        {/* Pagination */}
-        {data && data.pagination.totalPages > 1 && (
-          <div className="mt-4">
-            <Pagination pagination={data.pagination} onPageChange={setPage} />
+          {/* Results Count */}
+          <div className="mb-4 bg-white rounded-lg shadow-sm border border-gray-200 px-6 py-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-[#1A1A40]">
+                Showing{" "}
+                <span className="text-[#2ECC71] font-bold">
+                  {data?.data.length}
+                </span>{" "}
+                of{" "}
+                <span className="text-[#2ECC71] font-bold">
+                  {data?.pagination.total}
+                </span>{" "}
+                users
+              </span>
+              <span className="text-xs text-gray-500">
+                Page {page} of {data?.pagination.totalPages}
+              </span>
+            </div>
           </div>
-        )}
+
+          {/* Users Table - Using the UserTable component */}
+          <UserTable users={data?.data || []} />
+
+          {/* Pagination */}
+          {data && data.pagination.totalPages > 1 && (
+            <div className="mt-4">
+              <Pagination pagination={data.pagination} onPageChange={setPage} />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 }
