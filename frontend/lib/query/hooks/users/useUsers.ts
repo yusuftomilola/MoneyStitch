@@ -8,5 +8,9 @@ export function useUsers(params: PaginationParams & UsersFilters) {
     endpoint: "/users",
     queryKey: "users",
     params,
+    options: {
+      staleTime: 5 * 60 * 1000, // 5 minutes - reduce unnecessary refetches
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache longer
+    },
   });
 }

@@ -18,8 +18,9 @@ export function useActivateUser() {
   return useMutation({
     mutationKey: mutationKeys.activateUser,
     mutationFn: activateUserFn,
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+    onSuccess: (response, userId) => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
 
       toast.success(response.message || "User activated successfully");
     },

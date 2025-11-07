@@ -18,8 +18,9 @@ export function useSuspendUser() {
   return useMutation({
     mutationKey: mutationKeys.suspendUser,
     mutationFn: suspendUserFn,
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+    onSuccess: (response, userId) => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
 
       toast.success(response.message || "User suspended successfully");
     },
