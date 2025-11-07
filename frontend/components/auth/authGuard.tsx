@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthState } from "@/lib/store/authStore";
 import { Loader2 } from "lucide-react";
+import { Suspense } from "react";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -87,14 +88,16 @@ export function AuthGuard({
   if (requiredRole && user && user.role !== requiredRole) {
     return (
       fallback || (
-        <div className="min-h-screen flex items-center justify-cente">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
-            <p className="text-muted-foreground">
-              You don&#39;t have permission to access this page.
-            </p>
+        <Suspense fallback={<div>Loading...</div>}>
+          <div className="min-h-screen flex items-center justify-cente">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
+              <p className="text-muted-foreground">
+                You don&#39;t have permission to access this page.
+              </p>
+            </div>
           </div>
-        </div>
+        </Suspense>
       )
     );
   }
