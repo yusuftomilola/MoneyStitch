@@ -139,8 +139,7 @@ const VerifyEmailForm = () => {
                 Verification Failed
               </h1>
               <p className="text-slate-600 text-lg mb-6">
-                {error?.message ||
-                  "The verification link is invalid or has expired."}
+                The verification link is invalid or has expired.
               </p>
 
               <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">

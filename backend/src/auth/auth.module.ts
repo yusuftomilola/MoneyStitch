@@ -60,6 +60,7 @@ import { AuditLogModule } from 'src/audit-log/audit-log.module';
     RefreshTokensProvider,
     FindOneRefreshTokenProvider,
     GenerateTokensProvider,
+    JwtModule,
   ],
 })
 export class AuthModule {}

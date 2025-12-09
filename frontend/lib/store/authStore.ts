@@ -1,3 +1,4 @@
+// frontend/lib/store/authStore.ts
 import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
 import { persist, devtools } from "zustand/middleware";
@@ -365,13 +366,15 @@ export const useAuthState = () =>
   );
 
 export const useAuthActions = () =>
-  useAuthStore((state) => ({
-    login: state.login,
-    register: state.register,
-    logout: state.logout,
-    refreshAccessToken: state.refreshAccessToken,
-    updateProfile: state.updateProfile,
-    updateEmailVerificationStatus: state.updateEmailVerificationStatus, // NEW
-    initializeAuth: state.initializeAuth,
-    clearAuth: state.clearAuth,
-  }));
+  useAuthStore(
+    useShallow((state) => ({
+      login: state.login,
+      register: state.register,
+      logout: state.logout,
+      refreshAccessToken: state.refreshAccessToken,
+      updateProfile: state.updateProfile,
+      updateEmailVerificationStatus: state.updateEmailVerificationStatus,
+      initializeAuth: state.initializeAuth,
+      clearAuth: state.clearAuth,
+    }))
+  );

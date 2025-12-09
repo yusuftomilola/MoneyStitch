@@ -1,3 +1,4 @@
+// frontend/components/layout/Navbar.tsx
 "use client";
 import { DollarSign, X, Menu, Mail, AlertCircle } from "lucide-react";
 import Link from "next/link";
@@ -85,35 +86,33 @@ export default function Navbar() {
             </Link>
 
             <div className="hidden md:flex items-center space-x-8">
+              {user?.role === "admin" && (
+                <Link
+                  href="/admin"
+                  className="text-slate-600 hover:text-emerald-600 transition-colors"
+                >
+                  Admin
+                </Link>
+              )}
+              {user?.role === "admin" && (
+                <Link
+                  href="/admin/audit-logs"
+                  className="text-slate-600 hover:text-emerald-600 transition-colors"
+                >
+                  Audit Logs
+                </Link>
+              )}
               <Link
-                href="#home"
-                className="text-slate-600 hover:text-emerald-600 transition-colors"
-              >
-                Home
-              </Link>
-              <Link
-                href="#tools"
-                className="text-slate-600 hover:text-emerald-600 transition-colors"
-              >
-                Tools
-              </Link>
-              <Link
-                href="#blog"
+                href="/blog"
                 className="text-slate-600 hover:text-emerald-600 transition-colors"
               >
                 Blog
               </Link>
               <Link
-                href="#premium"
+                href="/my-activity"
                 className="text-slate-600 hover:text-emerald-600 transition-colors"
               >
-                Premium
-              </Link>
-              <Link
-                href="#contact"
-                className="text-slate-600 hover:text-emerald-600 transition-colors"
-              >
-                Contact
+                My Activity
               </Link>
             </div>
 
@@ -191,36 +190,38 @@ export default function Navbar() {
         {isMenuOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-gray-100 shadow-lg">
             <div className="px-4 py-4 space-y-3">
+              {user?.role === "admin" && (
+                <Link
+                  href="/admin"
+                  className="block text-slate-600 hover:text-emerald-600 py-2"
+                >
+                  Admin
+                </Link>
+              )}
+
+              {user?.role === "admin" && (
+                <Link
+                  href="/admin/audit-logs"
+                  className="block text-slate-600 hover:text-emerald-600 py-2"
+                >
+                  Audit Logs
+                </Link>
+              )}
+
               <Link
-                href="#home"
-                className="block text-slate-600 hover:text-emerald-600 py-2"
-              >
-                Home
-              </Link>
-              <Link
-                href="#tools"
-                className="block text-slate-600 hover:text-emerald-600 py-2"
-              >
-                Tools
-              </Link>
-              <Link
-                href="#blog"
+                href="/blog"
                 className="block text-slate-600 hover:text-emerald-600 py-2"
               >
                 Blog
               </Link>
+
               <Link
-                href="#premium"
+                href="/my-activity"
                 className="block text-slate-600 hover:text-emerald-600 py-2"
               >
-                Premium
+                My Activity
               </Link>
-              <Link
-                href="#contact"
-                className="block text-slate-600 hover:text-emerald-600 py-2"
-              >
-                Contact
-              </Link>
+
               <div className="flex flex-col space-y-3 pt-3 border-t border-gray-100">
                 {isAuthenticated ? (
                   <>

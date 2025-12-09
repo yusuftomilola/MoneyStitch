@@ -1,3 +1,6 @@
+// frontend/components/homepage/Hero.tsx
+"use client";
+import { useAuthState } from "@/lib/store/authStore";
 import {
   PiggyBank,
   TrendingUp,
@@ -6,8 +9,10 @@ import {
   Star,
   CheckCircle,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function Hero() {
+  const { user, isAuthenticated } = useAuthState();
   return (
     <section
       id="home"
@@ -43,17 +48,25 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <button className="group bg-emerald-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center space-x-2">
-              <span>Start Learning Free</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="bg-white text-slate-700 px-8 py-4 rounded-full text-lg font-semibold border-2 border-slate-200 hover:border-emerald-600 hover:text-emerald-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
-              Try Our Free Calculator
-            </button>
+            {!isAuthenticated && (
+              <Link href="/register">
+                <button className="group bg-emerald-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-emerald-700 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center space-x-2">
+                  <span>Sign Up</span>
+                  {/* <span>Start Learning Free</span> */}
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </Link>
+            )}
+
+            <Link href="/blog">
+              <button className="bg-white text-slate-700 px-8 py-4 rounded-full text-lg font-semibold border-2 border-slate-200 hover:border-emerald-600 hover:text-emerald-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+                Our Blog
+              </button>
+            </Link>
           </div>
 
           <div className="flex items-center justify-center space-x-8 text-slate-500">
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <Users className="w-5 h-5" />
               <span>1,000+ Users</span>
             </div>
@@ -64,7 +77,7 @@ export default function Hero() {
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-emerald-500" />
               <span>100% Free</span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

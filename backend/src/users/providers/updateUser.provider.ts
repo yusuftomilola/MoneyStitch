@@ -13,6 +13,7 @@ import { UpdateUserDto } from '../dto/updateUser.dto';
 import { FindOneUserByIdProvider } from './findOneUserById.provider';
 import { UpdateUserResponse } from '../interfaces/responses';
 import { ErrorCatch } from 'src/common/helpers/errorCatch.util';
+import { UsersGateway } from './users.gateway';
 
 @Injectable()
 export class UpdateUserProvider {
@@ -23,6 +24,7 @@ export class UpdateUserProvider {
     private readonly usersRepository: Repository<User>,
     private readonly hashingProvider: HashingProvider,
     private readonly findOneUserByIdProvider: FindOneUserByIdProvider,
+    private readonly usersGateway: UsersGateway,
   ) {}
 
   public async updateOneUser(
@@ -70,6 +72,8 @@ export class UpdateUserProvider {
         where: { id: updatedUser.id },
         relations: ['profilePic'],
       });
+
+      this.usersGateway.emitUserUpdated(finalUser);
 
       this.logger.log(`User ${id} was successfully updated`);
 

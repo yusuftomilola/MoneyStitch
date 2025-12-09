@@ -1,3 +1,4 @@
+// frontend/finance/schemaTypes/blog.ts
 export default {
   name: 'blog',
   type: 'document',

@@ -87,7 +87,7 @@ function AuditLogsContent() {
 
         {/* Statistics Cards */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -116,7 +116,7 @@ function AuditLogsContent() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
@@ -129,7 +129,7 @@ function AuditLogsContent() {
                 </div>
                 <TrendingUp className="w-8 h-8 text-[#F1C40F]" />
               </div>
-            </div>
+            </div> */}
           </div>
         )}
 

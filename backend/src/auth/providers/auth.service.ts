@@ -160,4 +160,9 @@ export class AuthService {
   ): Promise<ChangePasswordResponse> {
     return await this.usersService.changePassword(userId, changePasswordDto);
   }
+
+  // WEBSOCKET VERIFY TOKEN
+  public async verifyWebsocketToken(token: string) {
+    return this.loginUserProvider.verifyToken(token);
+  }
 }

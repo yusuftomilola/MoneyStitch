@@ -14,6 +14,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import environmentValidation from './environment.validation';
 import { PaginationModule } from './common/pagination/pagination.module';
 import { AuditLogModule } from './audit-log/audit-log.module';
+import { GatewaysModule } from './common/gateways/gateways.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { AuditLogModule } from './audit-log/audit-log.module';
     ]),
     PaginationModule,
     AuditLogModule,
+    GatewaysModule,
   ],
   controllers: [AppController],
   providers: [

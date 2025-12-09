@@ -10,7 +10,9 @@ export function useUsers(params: PaginationParams & UsersFilters) {
     params,
     options: {
       staleTime: 5 * 60 * 1000, // 5 minutes - reduce unnecessary refetches
-      gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache longer
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache memory longer - cache time
+      refetchOnWindowFocus: false, // Don't refetch on tab focus
+      refetchOnMount: false, // Don't refetch if cache is fresh
     },
   });
 }

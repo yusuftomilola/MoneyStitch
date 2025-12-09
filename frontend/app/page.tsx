@@ -13,12 +13,12 @@ const MoneyStitchLanding = () => {
     <div className="min-h-screen bg-white">
       <Navbar />
       <Hero />
-      <Features />
-      <FeaturedTool />
+      {/* <Features /> */}
+      {/* <FeaturedTool /> */}
       <Blog />
-      <Premium />
+      {/* <Premium />
       <Newsletter />
-      <Footer />
+      <Footer /> */}
     </div>
   );
 };

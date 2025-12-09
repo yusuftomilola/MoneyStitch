@@ -7,6 +7,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { AuditLogService } from '../providers/audit-log.service';
 import { QueryAuditLogsDto } from '../dto/audit-log-filter.dto';
@@ -17,6 +18,7 @@ import { User } from 'src/users/entities/user.entity';
 import { PaginatedResponse } from 'src/common/pagination/interfaces/paginated-response.interface';
 import { AuditLog } from '../entities/audit-log.entity';
 import { CRITICAL_USER_ACTIONS } from '../constants/audit-categories';
+import { Request } from 'express';
 
 @Controller('api/v1/audit-logs')
 export class AuditLogController {

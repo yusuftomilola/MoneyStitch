@@ -6,6 +6,7 @@ import { GenerateTokensProvider } from './generateTokens.provider';
 import { RefreshTokenRepositoryOperations } from './RefreshTokenCrud.repository';
 import { AuthResponse } from '../interfaces/authResponse.interface';
 import { CookieHelper } from 'src/common/helpers/cookie.helper';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class LoginUserProvider {
@@ -15,6 +16,8 @@ export class LoginUserProvider {
     private readonly generateTokensProvider: GenerateTokensProvider,
 
     private readonly refreshTokenRepositoryOperations: RefreshTokenRepositoryOperations,
+
+    private readonly jwtService: JwtService,
   ) {}
 
   public async loginUser(
@@ -58,5 +61,9 @@ export class LoginUserProvider {
     response.cookie('authRefreshToken', refreshToken, cookieOptions);
 
     return { user, accessToken };
+  }
+
+  public verifyToken(jwt: string) {
+    this.jwtService.verify(jwt);
   }
 }

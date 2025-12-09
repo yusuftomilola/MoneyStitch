@@ -23,12 +23,17 @@ import { DeleteUserProvider } from './providers/deleteUser.provider';
 import { DataExportService } from './providers/data-export.service';
 import { SuspendUserProvider } from './providers/suspendUser.provider';
 import { ActivateUserProvider } from './providers/activeUser.provider';
+import { UsersGateway } from './providers/users.gateway';
+import { GatewaysModule } from 'src/common/gateways/gateways.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     forwardRef(() => AuthModule),
     TypeOrmModule.forFeature([User]),
     EmailModule,
+    forwardRef(() => GatewaysModule),
+    ConfigModule,
   ],
   controllers: [UsersController],
   providers: [
@@ -51,6 +56,7 @@ import { ActivateUserProvider } from './providers/activeUser.provider';
     DataExportService,
     SuspendUserProvider,
     ActivateUserProvider,
+    UsersGateway,
   ],
   exports: [UsersService],
 })

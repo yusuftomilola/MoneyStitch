@@ -13,6 +13,7 @@ import { RefreshTokenRepositoryOperations } from 'src/auth/providers/RefreshToke
 import { CookieHelper } from 'src/common/helpers/cookie.helper';
 import { EmailService } from 'src/email/email.service';
 import { EmailVerificationTokenProvider } from './emailVerificationToken.provider';
+import { UsersGateway } from './users.gateway';
 
 @Injectable()
 export class CreateUserProvider {
@@ -31,6 +32,8 @@ export class CreateUserProvider {
     private readonly emailService: EmailService,
 
     private readonly emailVerificationTokenProvider: EmailVerificationTokenProvider,
+
+    private readonly usersGateway: UsersGateway,
   ) {}
 
   public async createUser(
@@ -55,6 +58,8 @@ export class CreateUserProvider {
       let user = this.userRepository.create(createUserDto);
 
       user = await this.userRepository.save(user);
+
+      this.usersGateway.emitUserCreated(user);
 
       // clear any existing cookie first to make room for new cookie
       const clearOptions = CookieHelper.getClearCookieOptions(

@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { FindOneUserByIdProvider } from './findOneUserById.provider';
 import { DeleteUserResponse } from '../interfaces/responses';
 import { ErrorCatch } from 'src/common/helpers/errorCatch.util';
+import { UsersGateway } from './users.gateway';
 
 @Injectable()
 export class DeleteUserProvider {
@@ -15,6 +16,8 @@ export class DeleteUserProvider {
     private readonly usersRepository: Repository<User>,
 
     private readonly findOneUserByIdProvider: FindOneUserByIdProvider,
+
+    private readonly usersGateway: UsersGateway,
   ) {}
 
   public async deleteUser(id: string): Promise<DeleteUserResponse> {
@@ -27,6 +30,8 @@ export class DeleteUserProvider {
           message: 'User not found or already deleted',
         };
       }
+
+      this.usersGateway.emitUserDeleted(id);
 
       this.logger.log(`User ${id} deleted successfully`);
       return {

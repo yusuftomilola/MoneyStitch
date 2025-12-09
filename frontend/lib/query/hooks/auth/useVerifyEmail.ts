@@ -34,7 +34,7 @@ export function useVerifyEmail() {
       }, 3000);
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to verfiy email");
+      toast.error("Failed to verfiy email");
       if (process.env.NODE_ENV === "development") {
         console.error(error);
       }
