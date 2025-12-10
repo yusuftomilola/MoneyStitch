@@ -111,7 +111,7 @@ export default async function BlogPage() {
                 No articles yet
               </h3>
               <p className="text-slate-600 max-w-md mx-auto">
-                We're working on creating valuable content for you. Check back
+                We are working on creating valuable content for you. Check back
                 soon for our latest financial insights and guides.
               </p>
             </div>

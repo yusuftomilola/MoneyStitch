@@ -235,7 +235,8 @@ export default async function BlogArticlePage({
               Article Not Found
             </h1>
             <p className="text-slate-600 mb-8">
-              The article you're looking for doesn't exist or has been removed.
+              The article you are looking for does not exist or has been
+              removed.
             </p>
             <Link href="/blog">
               <button className="inline-flex items-center space-x-2 bg-emerald-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-700 transition-colors">
