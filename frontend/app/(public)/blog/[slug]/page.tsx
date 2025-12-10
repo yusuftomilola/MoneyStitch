@@ -11,10 +11,86 @@ import {
   Share2,
   ArrowRight,
 } from "lucide-react";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 export const revalidate = 30; // revalidate at most 30 seconds
+
+// Generate dynamic metadata for each blog post
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const query = `
+    *[_type == "blog" && slug.current == $slug] {
+      title,
+      smallDescription,
+      titleImage,
+      _createdAt
+    }[0]
+  `;
+
+  const post = await client.fetch(query, { slug });
+
+  if (!post) {
+    return {
+      title: "Article Not Found",
+      description:
+        "The article you're looking for doesn't exist or has been removed.",
+    };
+  }
+
+  const imageUrl = post.titleImage
+    ? urlFor(post.titleImage).width(1200).height(630).url()
+    : null;
+
+  return {
+    title: post.title,
+    description:
+      post.smallDescription ||
+      `Read "${post.title}" on MoneyStitch Blog - practical financial insights and guides.`,
+    keywords: [
+      "personal finance",
+      "money management",
+      "financial education",
+      post.title.toLowerCase(),
+    ],
+    authors: [{ name: "MoneyStitch" }],
+    openGraph: {
+      title: post.title,
+      description:
+        post.smallDescription || `Read "${post.title}" on MoneyStitch Blog.`,
+      url: `/blog/${slug}`,
+      type: "article",
+      publishedTime: post._createdAt,
+      siteName: "MoneyStitch",
+      images: imageUrl
+        ? [
+            {
+              url: imageUrl,
+              width: 1200,
+              height: 630,
+              alt: post.title,
+            },
+          ]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description:
+        post.smallDescription || `Read "${post.title}" on MoneyStitch Blog.`,
+      images: imageUrl ? [imageUrl] : [],
+    },
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
+  };
+}
 
 async function getData(slug: string) {
   const query = `
@@ -173,8 +249,41 @@ export default async function BlogArticlePage({
     );
   }
 
+  // JSON-LD structured data for SEO
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: data.title,
+    description: data.smallDescription,
+    image: data.titleImage ? urlFor(data.titleImage).url() : undefined,
+    datePublished: data._createdAt,
+    dateModified: data._createdAt,
+    author: {
+      "@type": "Organization",
+      name: "MoneyStitch",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "MoneyStitch",
+      logo: {
+        "@type": "ImageObject",
+        url: "/logo.png",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `/blog/${slug}`,
+    },
+  };
+
   return (
     <>
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <Navbar />
 
       {/* Hero Section */}
@@ -188,12 +297,6 @@ export default async function BlogArticlePage({
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span>Back to Blog</span>
           </Link>
-
-          {/* Category Badge */}
-          {/* <div className="inline-flex items-center space-x-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <BookOpen className="w-4 h-4" />
-            <span>MoneyStitch Blog</span>
-          </div> */}
 
           {/* Title */}
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 mb-6 leading-tight">
@@ -212,7 +315,9 @@ export default async function BlogArticlePage({
             {data._createdAt && (
               <div className="flex items-center space-x-2">
                 <Calendar className="w-5 h-5" />
-                <span>{formatDate(data._createdAt)}</span>
+                <time dateTime={data._createdAt}>
+                  {formatDate(data._createdAt)}
+                </time>
               </div>
             )}
             <div className="flex items-center space-x-2">

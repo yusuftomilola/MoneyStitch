@@ -2,11 +2,44 @@
 import { Navbar } from "@/components/layout";
 import { client, urlFor } from "@/lib/sanity";
 import { BlogCard } from "@/lib/types/blog";
-import { BookOpen, Calendar, Clock, ArrowRight, Search } from "lucide-react";
+import { BookOpen, Calendar, Clock, ArrowRight } from "lucide-react";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 export const revalidate = 30; // revalidate at most 30 seconds
+
+export const metadata: Metadata = {
+  title: "Blog - Financial Guides & Tips",
+  description:
+    "Explore our collection of practical financial guides, money management tips, and expert insights to help you build better money habits and achieve financial freedom.",
+  keywords: [
+    "personal finance blog",
+    "money tips",
+    "budgeting guides",
+    "financial literacy",
+    "saving money",
+    "investment advice",
+    "debt management",
+    "financial planning",
+  ],
+  openGraph: {
+    title: "MoneyStitch Blog - Financial Wisdom for Everyday Life",
+    description:
+      "Practical guides, expert insights, and actionable tips to help you build better money habits and secure your financial future.",
+    url: "/blog",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MoneyStitch Blog - Financial Guides & Tips",
+    description:
+      "Practical financial guides and money management tips to build better money habits.",
+  },
+  alternates: {
+    canonical: "/blog",
+  },
+};
 
 async function getData() {
   const query = `
@@ -226,29 +259,6 @@ export default async function BlogPage() {
           )}
         </div>
       </section>
-
-      {/* Newsletter Section */}
-      {/* <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-600 to-emerald-700">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Stay Financially Informed
-          </h2>
-          <p className="text-emerald-100 text-lg mb-8">
-            Get our latest articles and financial tips delivered straight to
-            your inbox.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-6 py-4 rounded-full text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-emerald-300"
-            />
-            <button className="bg-slate-800 text-white px-8 py-4 rounded-full font-semibold hover:bg-slate-900 transition-all transform hover:scale-105 shadow-xl">
-              Subscribe
-            </button>
-          </div>
-        </div>
-      </section> */}
     </>
   );
 }

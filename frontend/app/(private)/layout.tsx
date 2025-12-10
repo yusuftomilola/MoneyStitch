@@ -1,4 +1,3 @@
-"use client";
 import { Footer, Navbar } from "@/components/layout";
 
 export default function RootLayout({
