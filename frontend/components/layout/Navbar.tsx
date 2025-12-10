@@ -108,12 +108,14 @@ export default function Navbar() {
               >
                 Blog
               </Link>
-              <Link
-                href="/my-activity"
-                className="text-slate-600 hover:text-emerald-600 transition-colors"
-              >
-                My Activity
-              </Link>
+              {isAuthenticated && (
+                <Link
+                  href="/my-activity"
+                  className="text-slate-600 hover:text-emerald-600 transition-colors"
+                >
+                  My Activity
+                </Link>
+              )}
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
@@ -215,12 +217,14 @@ export default function Navbar() {
                 Blog
               </Link>
 
-              <Link
-                href="/my-activity"
-                className="block text-slate-600 hover:text-emerald-600 py-2"
-              >
-                My Activity
-              </Link>
+              {isAuthenticated && (
+                <Link
+                  href="/my-activity"
+                  className="block text-slate-600 hover:text-emerald-600 py-2"
+                >
+                  My Activity
+                </Link>
+              )}
 
               <div className="flex flex-col space-y-3 pt-3 border-t border-gray-100">
                 {isAuthenticated ? (

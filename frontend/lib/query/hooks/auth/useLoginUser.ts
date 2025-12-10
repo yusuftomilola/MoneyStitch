@@ -22,7 +22,7 @@ export function useLoginUser() {
     onSuccess: () => {
       toast.success("User logged in successfully");
       const redirectTo = searchParams.get("redirect");
-      router.push(redirectTo || "/dashboard");
+      router.push(redirectTo || "/");
     },
     onError: (error) => {
       toast.error(error.message || "Logging in user failed.");

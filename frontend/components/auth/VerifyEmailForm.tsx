@@ -109,10 +109,10 @@ const VerifyEmailForm = () => {
               </p>
 
               <Link
-                href={"/dashboard"}
+                href={"/"}
                 className="w-full bg-emerald-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-emerald-700 transition-all transform hover:scale-[1.02] flex items-center justify-center space-x-2"
               >
-                <span>Go to Dashboard</span>
+                <span>Go to Home</span>
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
